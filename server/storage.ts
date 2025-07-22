@@ -43,17 +43,26 @@ export interface IStorage {
 }
 
 export class DatabaseStorage implements IStorage {
+  private checkDbConnection() {
+    if (!db) {
+      throw new Error("Database connection not available. Please set DATABASE_URL environment variable.");
+    }
+  }
+
   async getUser(id: number): Promise<User | undefined> {
+    this.checkDbConnection();
     const [user] = await db.select().from(users).where(eq(users.id, id));
     return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
+    this.checkDbConnection();
     const [user] = await db.select().from(users).where(eq(users.username, username));
     return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
+    this.checkDbConnection();
     const [user] = await db
       .insert(users)
       .values(insertUser)
@@ -62,6 +71,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createAccountApplication(application: InsertAccountApplication): Promise<AccountApplication> {
+    this.checkDbConnection();
     const [accountApplication] = await db
       .insert(accountApplications)
       .values(application)
@@ -70,15 +80,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAccountApplications(): Promise<AccountApplication[]> {
+    this.checkDbConnection();
     return await db.select().from(accountApplications);
   }
 
   async getAccountApplication(id: number): Promise<AccountApplication | undefined> {
+    this.checkDbConnection();
     const [application] = await db.select().from(accountApplications).where(eq(accountApplications.id, id));
     return application || undefined;
   }
 
   async createLoanApplication(application: InsertLoanApplication): Promise<LoanApplication> {
+    this.checkDbConnection();
     const [loanApplication] = await db
       .insert(loanApplications)
       .values(application)
@@ -87,15 +100,18 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLoanApplications(): Promise<LoanApplication[]> {
+    this.checkDbConnection();
     return await db.select().from(loanApplications);
   }
 
   async getLoanApplication(id: number): Promise<LoanApplication | undefined> {
+    this.checkDbConnection();
     const [application] = await db.select().from(loanApplications).where(eq(loanApplications.id, id));
     return application || undefined;
   }
 
   async createContactMessage(message: InsertContactMessage): Promise<ContactMessage> {
+    this.checkDbConnection();
     const [contactMessage] = await db
       .insert(contactMessages)
       .values(message)
@@ -104,10 +120,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getContactMessages(): Promise<ContactMessage[]> {
+    this.checkDbConnection();
     return await db.select().from(contactMessages);
   }
 
   async getBranches(): Promise<Branch[]> {
+    this.checkDbConnection();
     let branchList = await db.select().from(branches);
     
     // If no branches exist, create the default Lead City University branch
@@ -130,6 +148,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getBranch(id: number): Promise<Branch | undefined> {
+    this.checkDbConnection();
     const [branch] = await db.select().from(branches).where(eq(branches.id, id));
     return branch || undefined;
   }
