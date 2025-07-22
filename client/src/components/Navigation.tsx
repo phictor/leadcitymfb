@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, X } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default function Navigation() {
   const [location] = useLocation();
@@ -24,13 +25,7 @@ export default function Navigation() {
           {/* Logo Section */}
           <Link href="/" className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <div className="w-10 h-10">
-                <img 
-                  src="/attached_assets/PHOTO-2025-07-22-10-47-51_1753193653970.jpg" 
-                  alt="Lead City Microfinance Bank Logo" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <Logo />
               <div className="ml-3">
                 <span className="dark-green font-bold text-lg">Lead City</span>
                 <div className="text-xs text-gray-600 uppercase tracking-wide">Microfinance Bank</div>

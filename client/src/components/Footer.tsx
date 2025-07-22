@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { BANK_INFO } from "@/lib/constants";
+import Logo from "@/components/Logo";
 
 export default function Footer() {
   return (
@@ -9,13 +10,7 @@ export default function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <div className="w-10 h-10">
-                <img 
-                  src="/attached_assets/PHOTO-2025-07-22-10-47-51_1753193653970.jpg" 
-                  alt="Lead City Microfinance Bank Logo" 
-                  className="w-full h-full object-contain"
-                />
-              </div>
+              <Logo />
               <div className="ml-3">
                 <span className="text-white font-bold text-lg">Lead City</span>
                 <div className="text-xs text-gray-300 uppercase tracking-wide">Microfinance Bank</div>
