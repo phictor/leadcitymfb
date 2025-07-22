@@ -14,6 +14,8 @@ import {
   type InsertContactMessage,
   type Branch
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // User management
@@ -40,132 +42,97 @@ export interface IStorage {
   getBranch(id: number): Promise<Branch | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private accountApplications: Map<number, AccountApplication>;
-  private loanApplications: Map<number, LoanApplication>;
-  private contactMessages: Map<number, ContactMessage>;
-  private branches: Map<number, Branch>;
-  private currentUserId: number;
-  private currentAccountAppId: number;
-  private currentLoanAppId: number;
-  private currentContactId: number;
-  private currentBranchId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.accountApplications = new Map();
-    this.loanApplications = new Map();
-    this.contactMessages = new Map();
-    this.branches = new Map();
-    this.currentUserId = 1;
-    this.currentAccountAppId = 1;
-    this.currentLoanAppId = 1;
-    this.currentContactId = 1;
-    this.currentBranchId = 1;
-    
-    // Initialize with sample branches
-    this.initializeBranches();
-  }
-
-  private initializeBranches() {
-    const sampleBranches: Omit<Branch, 'id'>[] = [
-      {
-        name: "Lead City University Branch",
-        address: "Lead City University Campus, Toll Gate Area, Ibadan-Lagos Express Way, Ibadan, Oyo State",
-        phone: "+234 803 456 7890",
-        latitude: "7.3775",
-        longitude: "3.9470",
-        hours: "Mon - Fri: 8:00 AM - 4:00 PM"
-      }
-    ];
-
-    sampleBranches.forEach(branch => {
-      const id = this.currentBranchId++;
-      this.branches.set(id, { ...branch, id });
-    });
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async createAccountApplication(application: InsertAccountApplication): Promise<AccountApplication> {
-    const id = this.currentAccountAppId++;
-    const app: AccountApplication = { 
-      ...application, 
-      id, 
-      status: "pending",
-      createdAt: new Date()
-    };
-    this.accountApplications.set(id, app);
-    return app;
+    const [accountApplication] = await db
+      .insert(accountApplications)
+      .values(application)
+      .returning();
+    return accountApplication;
   }
 
   async getAccountApplications(): Promise<AccountApplication[]> {
-    return Array.from(this.accountApplications.values());
+    return await db.select().from(accountApplications);
   }
 
   async getAccountApplication(id: number): Promise<AccountApplication | undefined> {
-    return this.accountApplications.get(id);
+    const [application] = await db.select().from(accountApplications).where(eq(accountApplications.id, id));
+    return application || undefined;
   }
 
   async createLoanApplication(application: InsertLoanApplication): Promise<LoanApplication> {
-    const id = this.currentLoanAppId++;
-    const app: LoanApplication = { 
-      ...application, 
-      id, 
-      status: "pending",
-      createdAt: new Date()
-    };
-    this.loanApplications.set(id, app);
-    return app;
+    const [loanApplication] = await db
+      .insert(loanApplications)
+      .values(application)
+      .returning();
+    return loanApplication;
   }
 
   async getLoanApplications(): Promise<LoanApplication[]> {
-    return Array.from(this.loanApplications.values());
+    return await db.select().from(loanApplications);
   }
 
   async getLoanApplication(id: number): Promise<LoanApplication | undefined> {
-    return this.loanApplications.get(id);
+    const [application] = await db.select().from(loanApplications).where(eq(loanApplications.id, id));
+    return application || undefined;
   }
 
   async createContactMessage(message: InsertContactMessage): Promise<ContactMessage> {
-    const id = this.currentContactId++;
-    const msg: ContactMessage = { 
-      ...message, 
-      id, 
-      status: "new",
-      createdAt: new Date()
-    };
-    this.contactMessages.set(id, msg);
-    return msg;
+    const [contactMessage] = await db
+      .insert(contactMessages)
+      .values(message)
+      .returning();
+    return contactMessage;
   }
 
   async getContactMessages(): Promise<ContactMessage[]> {
-    return Array.from(this.contactMessages.values());
+    return await db.select().from(contactMessages);
   }
 
   async getBranches(): Promise<Branch[]> {
-    return Array.from(this.branches.values());
+    let branchList = await db.select().from(branches);
+    
+    // If no branches exist, create the default Lead City University branch
+    if (branchList.length === 0) {
+      const [newBranch] = await db
+        .insert(branches)
+        .values({
+          name: "Lead City University Branch",
+          address: "Lead City University Campus, Toll Gate Area, Ibadan-Lagos Express Way, Ibadan, Oyo State",
+          phone: "+234 803 456 7890",
+          latitude: "7.3775",
+          longitude: "3.9470",
+          hours: "Mon - Fri: 8:00 AM - 4:00 PM"
+        })
+        .returning();
+      branchList = [newBranch];
+    }
+    
+    return branchList;
   }
 
   async getBranch(id: number): Promise<Branch | undefined> {
-    return this.branches.get(id);
+    const [branch] = await db.select().from(branches).where(eq(branches.id, id));
+    return branch || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

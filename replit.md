@@ -28,10 +28,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Development**: Integrated with Vite for hot reloading
 
 ### Database Architecture
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: PostgreSQL with Drizzle ORM (Neon Database)
 - **Schema Location**: Shared between client and server (`shared/schema.ts`)
-- **Migrations**: Managed by Drizzle Kit
-- **Connection**: Neon Database serverless connection
+- **Migrations**: Managed by Drizzle Kit (`npm run db:push`)
+- **Connection**: Neon Database serverless connection via `@neondatabase/serverless`
+- **Storage**: DatabaseStorage class replaces MemStorage for persistent data
 
 ## Key Components
 
