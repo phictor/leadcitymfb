@@ -64,7 +64,7 @@ export default function About() {
 
             <div>
               <img 
-                src="/attached_assets/image_1753191933045.png" 
+                src="/attached_assets/image_1753192332443.png" 
                 alt="Lead City University Campus - Home of Lead City Microfinance Bank" 
                 className="rounded-2xl shadow-2xl w-full h-auto" 
               />
