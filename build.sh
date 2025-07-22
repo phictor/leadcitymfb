@@ -10,9 +10,14 @@ npm install
 echo "Building client..."
 vite build --outDir dist/public
 
-# Copy attached assets to build directory
+# Copy built files to server/public for production serving
+echo "Setting up production files..."
+mkdir -p server/public
+cp -r dist/public/* server/public/
+
+# Copy attached assets
 echo "Copying assets..."
-mkdir -p dist/public/attached_assets
-cp -r attached_assets/* dist/public/attached_assets/
+mkdir -p server/public/attached_assets
+cp -r attached_assets/* server/public/attached_assets/
 
 echo "Build complete!"
