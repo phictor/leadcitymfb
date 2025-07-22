@@ -24,11 +24,12 @@ export default function Navigation() {
           {/* Logo Section */}
           <Link href="/" className="flex items-center">
             <div className="flex-shrink-0 flex items-center">
-              <div className="relative">
-                <div className="w-10 h-10 bg-brand-green rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">7</span>
-                  <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-brand-orange rounded-full"></div>
-                </div>
+              <div className="w-10 h-10">
+                <img 
+                  src="/attached_assets/PHOTO-2025-07-22-10-47-51_1753193653970.jpg" 
+                  alt="Lead City Microfinance Bank Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <div className="ml-3">
                 <span className="dark-green font-bold text-lg">Lead City</span>
