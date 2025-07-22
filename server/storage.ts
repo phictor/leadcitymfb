@@ -77,22 +77,6 @@ export class MemStorage implements IStorage {
         latitude: "7.3775",
         longitude: "3.9470",
         hours: "Mon - Fri: 8:00 AM - 4:00 PM"
-      },
-      {
-        name: "Bodija Branch",
-        address: "15 Bodija Market Road, Bodija, Ibadan, Oyo State",
-        phone: "+234 803 456 7891",
-        latitude: "7.4076",
-        longitude: "3.9166",
-        hours: "Mon - Fri: 8:00 AM - 4:00 PM"
-      },
-      {
-        name: "Ring Road Branch",
-        address: "23 Ring Road, Challenge, Ibadan, Oyo State",
-        phone: "+234 803 456 7892",
-        latitude: "7.4030",
-        longitude: "3.9304",
-        hours: "Mon - Fri: 8:00 AM - 4:00 PM"
       }
     ];
 

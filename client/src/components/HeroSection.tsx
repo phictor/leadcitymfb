@@ -42,8 +42,8 @@ export default function HeroSection() {
                 <div className="text-sm text-gray-600">Loans Disbursed</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold dark-green">10+</div>
-                <div className="text-sm text-gray-600">Branch Locations</div>
+                <div className="text-2xl font-bold dark-green">1</div>
+                <div className="text-sm text-gray-600">Branch Location</div>
               </div>
             </div>
           </div>

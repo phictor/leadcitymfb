@@ -64,8 +64,8 @@ export default function About() {
 
             <div>
               <img 
-                src="https://images.unsplash.com/photo-1562774053-701939374585?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
-                alt="Lead City University Campus" 
+                src="/attached_assets/image_1753191933045.png" 
+                alt="Lead City University Campus - Home of Lead City Microfinance Bank" 
                 className="rounded-2xl shadow-2xl w-full h-auto" 
               />
             </div>
@@ -100,8 +100,8 @@ export default function About() {
             </Card>
             <Card className="text-center">
               <CardContent className="p-6">
-                <div className="text-3xl font-bold dark-green mb-2">10+</div>
-                <div className="text-gray-600">Branch Locations</div>
+                <div className="text-3xl font-bold dark-green mb-2">1</div>
+                <div className="text-gray-600">Branch Location</div>
               </CardContent>
             </Card>
             <Card className="text-center">
@@ -129,7 +129,7 @@ export default function About() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: "Prof. Kabiru Aderemi Adeyemo",
+                name: "Mr. Koyin Owoeye",
                 position: "Chairman, Board of Directors",
                 image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=300"
               },
