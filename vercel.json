@@ -1,28 +1,36 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server/index.ts",
-      "use": "@vercel/node"
-    }
-  ],
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
   "routes": [
+    {
+      "src": "/api/account-applications",
+      "dest": "/api/account-applications.ts"
+    },
+    {
+      "src": "/api/loan-applications", 
+      "dest": "/api/loan-applications.ts"
+    },
+    {
+      "src": "/api/contact-messages",
+      "dest": "/api/contact-messages.ts"
+    },
+    {
+      "src": "/api/branches",
+      "dest": "/api/branches.ts"
+    },
     {
       "src": "/attached_assets/(.*)",
       "dest": "/attached_assets/$1"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/server/index.ts"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/server/index.ts"
+      "dest": "/api/index.ts"
     }
   ],
   "functions": {
-    "server/index.ts": {
-      "includeFiles": ["attached_assets/**", "server/public/**", "dist/public/**"]
+    "api/*.ts": {
+      "includeFiles": ["attached_assets/**", "dist/public/**", "shared/**", "server/storage.ts", "server/db.ts"]
     }
   },
   "env": {

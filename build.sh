@@ -6,18 +6,13 @@ echo "Building Lead City MFB website..."
 # Install dependencies
 npm install
 
-# Build client
+# Build client for Vercel
 echo "Building client..."
 vite build --outDir dist/public
 
-# Copy built files to server/public for production serving
-echo "Setting up production files..."
-mkdir -p server/public
-cp -r dist/public/* server/public/
-
-# Copy attached assets
-echo "Copying assets..."
-mkdir -p server/public/attached_assets
-cp -r attached_assets/* server/public/attached_assets/
+# Copy assets to public directory for Vercel static serving
+echo "Setting up static assets..."
+mkdir -p public
+cp -r attached_assets/* public/
 
 echo "Build complete!"
