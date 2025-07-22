@@ -74,37 +74,46 @@ export default function Navigation() {
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="icon" className="hover:bg-gray-100">
+                  <Menu className="h-6 w-6 text-gray-600" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col space-y-4 mt-8">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setIsOpen(false)}
-                      className={`block px-3 py-2 text-base font-medium ${
-                        location === link.href
-                          ? "text-brand-green"
-                          : "text-gray-600 hover:text-brand-green"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                  <div className="flex flex-col space-y-2 px-3 py-2">
-                    <Link href="/account-opening" onClick={() => setIsOpen(false)}>
-                      <Button className="w-full bg-brand-green hover:bg-dark-green">
-                        Open Account
-                      </Button>
-                    </Link>
-                    <Link href="/banking" onClick={() => setIsOpen(false)}>
-                      <Button variant="outline" className="w-full border-brand-green text-brand-green hover:bg-brand-green hover:text-white">
-                        Login
-                      </Button>
-                    </Link>
+                <div className="flex flex-col space-y-6 mt-8">
+                  <div className="border-b border-gray-200 pb-4">
+                    <h3 className="text-lg font-semibold dark-green">Menu</h3>
+                  </div>
+                  
+                  <div className="flex flex-col space-y-2">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`block px-4 py-3 rounded-lg text-base font-medium transition-all ${
+                          location === link.href
+                            ? "bg-green-50 text-brand-green border-l-4 border-brand-green"
+                            : "text-gray-600 hover:text-brand-green hover:bg-gray-50"
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                  
+                  <div className="border-t border-gray-200 pt-6">
+                    <div className="flex flex-col space-y-3">
+                      <Link href="/account-opening" onClick={() => setIsOpen(false)}>
+                        <Button className="w-full bg-brand-green hover:bg-dark-green text-white py-3">
+                          Open Account
+                        </Button>
+                      </Link>
+                      <Link href="/banking" onClick={() => setIsOpen(false)}>
+                        <Button variant="outline" className="w-full border-brand-green text-brand-green hover:bg-brand-green hover:text-white py-3">
+                          Login
+                        </Button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </SheetContent>
