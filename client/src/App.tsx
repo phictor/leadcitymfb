@@ -12,6 +12,7 @@ import Branches from "@/pages/Branches";
 import Contact from "@/pages/Contact";
 import AccountOpening from "@/pages/AccountOpening";
 import LoanApplication from "@/pages/LoanApplication";
+import News from "@/pages/News";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -26,6 +27,7 @@ function Router() {
         <Route path="/contact" component={Contact} />
         <Route path="/account-opening" component={AccountOpening} />
         <Route path="/loan-application" component={LoanApplication} />
+        <Route path="/news" component={News} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

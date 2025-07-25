@@ -14,6 +14,7 @@ export default function Navigation() {
     { href: "/products", label: "Products" },
     { href: "/banking", label: "Online Banking" },
     { href: "/branches", label: "Branches" },
+    { href: "/news", label: "News" },
     { href: "/contact", label: "Contact" },
   ];
 
