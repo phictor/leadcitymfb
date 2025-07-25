@@ -109,31 +109,6 @@ export default function Branches() {
                   <div className="absolute bottom-20 left-1/3 w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
                 </div>
               </Card>
-
-              {/* ATM Information */}
-              <Card className="mt-6">
-                <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold dark-green mb-4">ATM Services</h3>
-                  <div className="space-y-3 text-sm text-gray-600">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-brand-green rounded-full mr-3"></div>
-                      Available 24/7 at all branch locations
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-brand-green rounded-full mr-3"></div>
-                      Cash withdrawal, balance inquiry, mini statements
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-brand-green rounded-full mr-3"></div>
-                      Inter-bank transfers and bill payments
-                    </div>
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-brand-green rounded-full mr-3"></div>
-                      Free withdrawals for Lead City MFB customers
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
