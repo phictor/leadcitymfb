@@ -44,6 +44,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **Loan Application**: Comprehensive loan application form
 - **Online Banking**: Mock banking dashboard (demo only)
 - **Branches**: Branch locator with map integration
+- **News**: Blog-style news page with Sanity CMS integration
 - **Contact**: Contact form and company information
 
 ### UI Components
@@ -84,6 +85,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **@tanstack/react-query**: Server state management
 - **react-hook-form**: Form handling with validation
 - **@hookform/resolvers**: Zod integration for form validation
+
+### Content Management
+- **@sanity/client**: Sanity CMS client for content management
+- **sanity**: Sanity Studio for content editing
+- **@sanity/vision**: Query testing tool for Sanity
 
 ### UI Dependencies
 - **@radix-ui/***: Headless UI primitives (30+ components)
