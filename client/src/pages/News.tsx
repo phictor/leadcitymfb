@@ -10,7 +10,7 @@ const newsArticles = [
     id: 1,
     title: "Lead City MFB Launches New Digital Banking Platform",
     summary: "We're excited to announce the launch of our enhanced digital banking platform, offering customers 24/7 access to banking services with improved security features.",
-    content: "Lead City Microfinance Bank is proud to introduce our new digital banking platform, designed to provide seamless banking experiences for our valued customers. The platform features enhanced security protocols, intuitive user interfaces, and comprehensive banking functionalities including account management, fund transfers, bill payments, and loan applications.",
+    content: "Lead City Microfinance Bank is proud to introduce our new digital banking platform, designed to provide seamless banking experiences for our valued customers. The platform features enhanced security protocols, intuitive user interfaces, and comprehensive banking functionalities including account management, fund transfers, bill payments, and loan applications. The new platform also includes AI-powered chatbot support and biometric authentication for enhanced user experience.",
     category: "Technology",
     author: "Lead City MFB Team",
     publishDate: "2024-07-20",
@@ -20,13 +20,13 @@ const newsArticles = [
   },
   {
     id: 2,
-    title: "Agricultural Loan Program Expansion Supports Local Farmers",
-    summary: "Our specialized agricultural financing program has been expanded to provide more comprehensive support for farmers across Oyo State.",
-    content: "Lead City Microfinance Bank continues its commitment to supporting agricultural development in Oyo State through our expanded agricultural loan program. The initiative provides tailored financing solutions for farmers, including seasonal loans, equipment financing, and working capital support. With competitive interest rates and flexible repayment terms aligned with farming cycles, we're empowering local farmers to increase productivity and improve their livelihoods.",
-    category: "Agriculture", 
-    author: "Agricultural Division",
-    publishDate: "2024-07-15",
-    readTime: "4 min read",
+    title: "Mobile Banking App Achieves 50,000 Downloads",
+    summary: "Our mobile banking application reaches a significant milestone, demonstrating growing customer adoption of digital banking solutions.",
+    content: "Lead City Microfinance Bank's mobile banking app has achieved 50,000 downloads within six months of launch. The app offers comprehensive banking services including balance inquiries, fund transfers, bill payments, and loan applications. With a 4.8-star rating on app stores, customers appreciate the user-friendly interface and robust security features. The app utilizes fingerprint authentication and real-time transaction notifications to ensure secure banking on the go.",
+    category: "Technology",
+    author: "Digital Banking Team",
+    publishDate: "2024-07-18",
+    readTime: "2 min read",
     image: "/api/placeholder/400/250",
     featured: false
   },
@@ -37,13 +37,37 @@ const newsArticles = [
     content: "Lead City Microfinance Bank successfully conducted a comprehensive financial literacy workshop at Lead City University, attended by over 200 students. The workshop covered essential topics including budgeting, saving strategies, understanding credit, digital banking security, and entrepreneurship financing. As part of our community engagement initiative, we're committed to empowering young people with financial knowledge to make informed decisions about their economic future.",
     category: "Education",
     author: "Community Relations",
-    publishDate: "2024-07-10",
+    publishDate: "2024-07-16",
     readTime: "2 min read", 
     image: "/api/placeholder/400/250",
     featured: false
   },
   {
     id: 4,
+    title: "Youth Entrepreneurship Training Program Launched",
+    summary: "New educational initiative targets young entrepreneurs with comprehensive business and financial training workshops.",
+    content: "Lead City Microfinance Bank has launched a Youth Entrepreneurship Training Program designed specifically for aspiring young business owners aged 18-35. The program includes modules on business plan development, financial management, marketing strategies, and access to startup funding. Over 150 participants have enrolled in the first cohort, with plans to expand the program to other universities across Oyo State. The initiative aims to reduce youth unemployment by fostering entrepreneurial skills and providing access to microfinance opportunities.",
+    category: "Education",
+    author: "Training Department",
+    publishDate: "2024-07-12",
+    readTime: "4 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
+  },
+  {
+    id: 5,
+    title: "Women Entrepreneurs Summit: Empowering Female Business Leaders",
+    summary: "Annual summit brings together successful women entrepreneurs to share insights and network with emerging female business owners.",
+    content: "Lead City Microfinance Bank hosted its annual Women Entrepreneurs Summit, featuring keynote speakers, panel discussions, and networking sessions. The event attracted over 300 female entrepreneurs from across Nigeria, focusing on topics such as accessing business funding, scaling operations, and overcoming gender-specific challenges in business. The bank announced a special women-focused loan product with reduced interest rates and flexible repayment terms to support female-led businesses.",
+    category: "Education",
+    author: "Gender Inclusion Team",
+    publishDate: "2024-07-08",
+    readTime: "3 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
+  },
+  {
+    id: 6,
     title: "Small Business Support Initiative Launches",
     summary: "New program offers comprehensive support for small and medium enterprises including financing, training, and mentorship.",
     content: "Lead City Microfinance Bank is launching a comprehensive Small Business Support Initiative designed to empower entrepreneurs and SMEs in our community. The program offers access to flexible financing options, business development training, mentorship opportunities, and networking events. Our goal is to create an ecosystem that nurtures business growth and contributes to local economic development.",
@@ -55,7 +79,31 @@ const newsArticles = [
     featured: false
   },
   {
-    id: 5,
+    id: 7,
+    title: "Partnership with Local Trade Associations Expands Business Network",
+    summary: "Strategic partnerships with trade associations provide enhanced business support and networking opportunities for SME customers.",
+    content: "Lead City Microfinance Bank has formed strategic partnerships with five major trade associations in Oyo State, including the Manufacturers Association, Traders Union, and Technology Hub Network. These partnerships provide our business customers with access to expanded markets, procurement opportunities, and professional development resources. The collaboration includes joint workshops, trade fairs, and mentorship programs designed to accelerate business growth and foster innovation in the local economy.",
+    category: "Business",
+    author: "Partnership Team",
+    publishDate: "2024-06-28",
+    readTime: "3 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
+  },
+  {
+    id: 8,
+    title: "Digital Payment Solutions Drive Cashless Economy",
+    summary: "Lead City MFB's digital payment platform processes over ₦2 billion in transactions, supporting Nigeria's cashless policy.",
+    content: "Lead City Microfinance Bank's digital payment solutions have processed over ₦2 billion in transactions since launch, contributing significantly to Nigeria's cashless economy initiative. The platform supports POS services, online payments, and peer-to-peer transfers. With a network of over 500 POS agents across Oyo State, the bank is bridging the gap between urban and rural financial inclusion. The service has reduced transaction costs for businesses and improved financial accessibility for underserved communities.",
+    category: "Business",
+    author: "Payment Systems Team",
+    publishDate: "2024-06-25",
+    readTime: "4 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
+  },
+  {
+    id: 9,
     title: "Enhanced Security Measures for Customer Protection",
     summary: "We've implemented additional security protocols to ensure the safety of our customers' financial information and transactions.",
     content: "Customer security remains our top priority at Lead City Microfinance Bank. We've recently implemented enhanced security measures including advanced fraud detection systems, multi-factor authentication for digital transactions, and upgraded encryption protocols. These improvements ensure that our customers can bank with confidence, knowing their financial information and transactions are protected by industry-leading security standards.",
@@ -65,10 +113,46 @@ const newsArticles = [
     readTime: "3 min read",
     image: "/api/placeholder/400/250",
     featured: false
+  },
+  {
+    id: 10,
+    title: "Cybersecurity Awareness Campaign Protects Customers",
+    summary: "Comprehensive cybersecurity education program helps customers identify and prevent digital fraud attempts.",
+    content: "Lead City Microfinance Bank has launched a comprehensive cybersecurity awareness campaign to educate customers about digital fraud prevention. The campaign includes SMS alerts, email newsletters, and in-branch workshops covering topics such as phishing recognition, password security, and safe online banking practices. The initiative has resulted in a 40% reduction in successful fraud attempts against our customers. The bank also provides 24/7 fraud monitoring and immediate account protection services.",
+    category: "Security",
+    author: "Cybersecurity Team",
+    publishDate: "2024-06-20",
+    readTime: "3 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
+  },
+  {
+    id: 11,
+    title: "Biometric Authentication System Enhances Account Security",
+    summary: "Implementation of fingerprint and facial recognition technology provides additional security layers for customer accounts.",
+    content: "Lead City Microfinance Bank has introduced biometric authentication systems across all digital platforms, including mobile apps and online banking. The system uses fingerprint and facial recognition technology to verify customer identities, providing an additional security layer beyond traditional passwords. This technology reduces the risk of unauthorized account access and ensures that only account holders can perform sensitive transactions. The system is compliant with international security standards and provides customers with peace of mind.",
+    category: "Security",
+    author: "Authentication Systems Team",
+    publishDate: "2024-06-15",
+    readTime: "4 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
+  },
+  {
+    id: 12,
+    title: "AI-Powered Fraud Detection System Prevents ₦50M in Losses",
+    summary: "Advanced artificial intelligence system successfully identifies and prevents fraudulent transactions before they impact customers.",
+    content: "Lead City Microfinance Bank's newly implemented AI-powered fraud detection system has prevented over ₦50 million in potential losses within its first quarter of operation. The system analyzes transaction patterns in real-time, identifying suspicious activities and automatically blocking potentially fraudulent transactions. The AI system learns from each interaction, continuously improving its accuracy and reducing false positives. This technology represents our commitment to protecting customer assets while maintaining seamless banking experiences.",
+    category: "Technology",
+    author: "AI Development Team",
+    publishDate: "2024-06-10",
+    readTime: "3 min read",
+    image: "/api/placeholder/400/250",
+    featured: false
   }
 ];
 
-const categories = ["All", "Technology", "Agriculture", "Education", "Business", "Security"];
+const categories = ["All", "Technology", "Education", "Business", "Security"];
 
 export default function News() {
   const [selectedCategory, setSelectedCategory] = useState("All");
