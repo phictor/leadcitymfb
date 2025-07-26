@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Users, DollarSign, MapPin, Smartphone, Shield, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users, DollarSign, MapPin, Smartphone, Shield, Clock, Building2, CreditCard, PiggyBank } from "lucide-react";
 import { Link } from "wouter";
 
 interface HeroSlide {
@@ -61,7 +61,7 @@ const heroSlides: HeroSlide[] = [
         label: "Branch Location"
       }
     ],
-    backgroundColor: "from-brand-green to-dark-green"
+    backgroundColor: "from-emerald-600 to-emerald-800"
   },
   {
     id: 2,
@@ -234,7 +234,7 @@ export default function HeroCarousel() {
               <Link href={currentSlideData.primaryButton.link}>
                 <Button 
                   size="lg" 
-                  className="bg-white text-brand-green hover:bg-gray-100 font-semibold px-8 py-3"
+                  className="bg-white text-emerald-700 hover:bg-gray-100 font-semibold px-8 py-3 shadow-lg"
                 >
                   {currentSlideData.primaryButton.text}
                 </Button>
@@ -245,7 +245,7 @@ export default function HeroCarousel() {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="border-white text-white hover:bg-white hover:text-brand-green font-semibold px-8 py-3"
+                    className="border-white text-white hover:bg-white hover:text-emerald-700 font-semibold px-8 py-3 shadow-lg"
                   >
                     {currentSlideData.secondaryButton.text}
                   </Button>
@@ -276,13 +276,29 @@ export default function HeroCarousel() {
             )}
           </div>
 
-          {/* Visual Element - Logo/Icon */}
+          {/* Visual Element - Banking Icons */}
           <div className="hidden lg:flex justify-center items-center opacity-0 animate-[fadeInRight_0.8s_ease-out_0.6s_forwards]">
-            <div className="w-80 h-80 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center">
-              <div className="w-60 h-60 bg-white/20 rounded-full flex items-center justify-center">
-                <div className="text-white text-6xl font-bold">
-                  LCM
-                </div>
+            <div className="relative w-80 h-80">
+              {/* Central Banking Icon */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                {currentSlide === 0 && <Building2 className="w-16 h-16 text-white" />}
+                {currentSlide === 1 && <Smartphone className="w-16 h-16 text-white" />}
+                {currentSlide === 2 && <CreditCard className="w-16 h-16 text-white" />}
+                {currentSlide === 3 && <PiggyBank className="w-16 h-16 text-white" />}
+              </div>
+              
+              {/* Floating Elements */}
+              <div className="absolute top-8 left-16 w-16 h-16 bg-white/10 rounded-full flex items-center justify-center animate-bounce">
+                <DollarSign className="w-8 h-8 text-white/80" />
+              </div>
+              <div className="absolute top-16 right-8 w-12 h-12 bg-white/10 rounded-full flex items-center justify-center animate-pulse">
+                <Shield className="w-6 h-6 text-white/80" />
+              </div>
+              <div className="absolute bottom-16 left-8 w-14 h-14 bg-white/10 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <Users className="w-7 h-7 text-white/80" />
+              </div>
+              <div className="absolute bottom-8 right-16 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center animate-pulse" style={{ animationDelay: '1s' }}>
+                <Clock className="w-5 h-5 text-white/80" />
               </div>
             </div>
           </div>
