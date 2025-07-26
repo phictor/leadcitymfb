@@ -3,18 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, ArrowRight, Tag, User } from "lucide-react";
-import { useNewsArticles, useFeaturedArticle, useArticlesByCategory } from "@/hooks/useNews";
-import { urlForImage, type NewsArticle } from "@/lib/sanity";
+import { useNewsArticles, useFeaturedArticle, useArticlesByCategory, type NewsArticle } from "@/hooks/useNews";
 
-// News data is now managed through Sanity CMS
+// News data is now managed through built-in admin panel
 
 const categories = ["All", "Technology", "Education", "Business", "Security"];
 
 export default function News() {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedArticle, setSelectedArticle] = useState<string | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<number | null>(null);
 
-  // Fetch data from Sanity CMS
+  // Fetch data from database API
   const { data: allArticles = [], isLoading: articlesLoading } = useNewsArticles();
   const { data: featuredArticle, isLoading: featuredLoading } = useFeaturedArticle();
   const { data: filteredArticles = [], isLoading: filteredLoading } = useArticlesByCategory(selectedCategory);
@@ -60,7 +59,7 @@ export default function News() {
                   <div className="h-64 md:h-full bg-gray-200 flex items-center justify-center overflow-hidden">
                     {featuredArticle.image ? (
                       <img 
-                        src={urlForImage(featuredArticle.image) || '/api/placeholder/400/250'} 
+                        src={featuredArticle.image} 
                         alt={featuredArticle.title}
                         className="w-full h-full object-cover"
                       />
@@ -91,7 +90,7 @@ export default function News() {
                       {featuredArticle.author}
                     </div>
                     <Button 
-                      onClick={() => setSelectedArticle(featuredArticle._id)}
+                      onClick={() => setSelectedArticle(featuredArticle.id)}
                       className="bg-brand-green hover:bg-dark-green"
                     >
                       Read More <ArrowRight className="w-4 h-4 ml-2" />
@@ -150,11 +149,11 @@ export default function News() {
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredArticles.filter(article => !article.featured).map((article) => (
-                <Card key={article._id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <Card key={article.id} className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
                     {article.image ? (
                       <img 
-                        src={urlForImage(article.image) || '/api/placeholder/400/250'} 
+                        src={article.image} 
                         alt={article.title}
                         className="w-full h-full object-cover"
                       />
@@ -189,7 +188,7 @@ export default function News() {
                     <Button 
                       size="sm" 
                       variant="outline"
-                      onClick={() => setSelectedArticle(article._id)}
+                      onClick={() => setSelectedArticle(article.id)}
                       className="w-full border-brand-green text-brand-green hover:bg-brand-green hover:text-white"
                     >
                       Read Full Article
@@ -208,7 +207,7 @@ export default function News() {
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-8">
               {(() => {
-                const article = allArticles.find(a => a._id === selectedArticle);
+                const article = allArticles.find(a => a.id === selectedArticle);
                 if (!article) return null;
                 
                 return (
@@ -243,7 +242,7 @@ export default function News() {
                     <div className="h-64 bg-gray-200 rounded-lg flex items-center justify-center mb-6 overflow-hidden">
                       {article.image ? (
                         <img 
-                          src={urlForImage(article.image) || '/api/placeholder/400/250'} 
+                          src={article.image} 
                           alt={article.title}
                           className="w-full h-full object-cover"
                         />

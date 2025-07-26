@@ -67,6 +67,22 @@ export const branches = pgTable("branches", {
   hours: text("hours").notNull(),
 });
 
+export const newsArticles = pgTable("news_articles", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  summary: text("summary").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull(),
+  author: text("author").notNull(),
+  publishDate: text("publish_date").notNull(),
+  readTime: text("read_time").notNull(),
+  featured: boolean("featured").default(false),
+  image: text("image"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertAccountApplicationSchema = createInsertSchema(accountApplications).omit({
   id: true,
@@ -91,6 +107,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
+export const insertNewsArticleSchema = createInsertSchema(newsArticles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertAccountApplication = z.infer<typeof insertAccountApplicationSchema>;
 export type AccountApplication = typeof accountApplications.$inferSelect;
@@ -105,3 +127,6 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 
 export type Branch = typeof branches.$inferSelect;
+
+export type InsertNewsArticle = z.infer<typeof insertNewsArticleSchema>;
+export type NewsArticle = typeof newsArticles.$inferSelect;

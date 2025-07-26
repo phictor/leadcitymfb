@@ -4,6 +4,7 @@ import {
   loanApplications, 
   contactMessages, 
   branches,
+  newsArticles,
   type User, 
   type InsertUser,
   type AccountApplication,
@@ -12,10 +13,12 @@ import {
   type InsertLoanApplication,
   type ContactMessage,
   type InsertContactMessage,
-  type Branch
+  type Branch,
+  type NewsArticle,
+  type InsertNewsArticle
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // User management
@@ -40,6 +43,13 @@ export interface IStorage {
   // Branches
   getBranches(): Promise<Branch[]>;
   getBranch(id: number): Promise<Branch | undefined>;
+  
+  // News articles
+  getNewsArticles(category?: string): Promise<NewsArticle[]>;
+  getFeaturedNewsArticle(): Promise<NewsArticle | null>;
+  createNewsArticle(article: InsertNewsArticle): Promise<NewsArticle>;
+  updateNewsArticle(id: number, article: InsertNewsArticle): Promise<NewsArticle>;
+  deleteNewsArticle(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -151,6 +161,45 @@ export class DatabaseStorage implements IStorage {
     this.checkDbConnection();
     const [branch] = await db.select().from(branches).where(eq(branches.id, id));
     return branch || undefined;
+  }
+
+  // News articles methods
+  async getNewsArticles(category?: string): Promise<NewsArticle[]> {
+    this.checkDbConnection();
+    let query = db.select().from(newsArticles).orderBy(desc(newsArticles.createdAt));
+    
+    if (category && category !== 'All') {
+      query = query.where(eq(newsArticles.category, category)) as any;
+    }
+    
+    return await query;
+  }
+
+  async getFeaturedNewsArticle(): Promise<NewsArticle | null> {
+    this.checkDbConnection();
+    const [article] = await db.select().from(newsArticles).where(eq(newsArticles.featured, true));
+    return article || null;
+  }
+
+  async createNewsArticle(article: InsertNewsArticle): Promise<NewsArticle> {
+    this.checkDbConnection();
+    const [newArticle] = await db.insert(newsArticles).values(article).returning();
+    return newArticle;
+  }
+
+  async updateNewsArticle(id: number, article: InsertNewsArticle): Promise<NewsArticle> {
+    this.checkDbConnection();
+    const [updatedArticle] = await db
+      .update(newsArticles)
+      .set({ ...article, updatedAt: new Date() })
+      .where(eq(newsArticles.id, id))
+      .returning();
+    return updatedArticle;
+  }
+
+  async deleteNewsArticle(id: number): Promise<void> {
+    this.checkDbConnection();
+    await db.delete(newsArticles).where(eq(newsArticles.id, id));
   }
 }
 

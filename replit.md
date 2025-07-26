@@ -7,6 +7,7 @@ This is a full-stack web application for Lead City Microfinance Bank, built with
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Content Management: Built-in admin panel preferred over external CMS (removed Sanity due to complexity).
 
 ## System Architecture
 
@@ -44,7 +45,8 @@ The application follows a modern full-stack architecture with clear separation b
 - **Loan Application**: Comprehensive loan application form
 - **Online Banking**: Mock banking dashboard (demo only)
 - **Branches**: Branch locator with map integration
-- **News**: Blog-style news page with Sanity CMS integration
+- **News**: Blog-style news page with built-in admin panel integration
+- **Admin**: Built-in content management panel for news articles
 - **Contact**: Contact form and company information
 
 ### UI Components
@@ -61,6 +63,11 @@ The application follows a modern full-stack architecture with clear separation b
 - `POST /api/contact-messages` - Submit contact messages
 - `GET /api/contact-messages` - Retrieve contact messages
 - `GET /api/branches` - Retrieve branch information
+- `GET /api/news-articles` - Retrieve news articles (with optional category filter)
+- `GET /api/news-articles/featured` - Retrieve featured news article
+- `POST /api/news-articles` - Create news articles
+- `PUT /api/news-articles/:id` - Update news articles
+- `DELETE /api/news-articles/:id` - Delete news articles
 
 ### Database Schema
 - **users**: User authentication (basic structure)
@@ -68,6 +75,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **loan_applications**: Loan applications with business details
 - **contact_messages**: Customer contact form submissions
 - **branches**: Bank branch locations and details
+- **news_articles**: News articles with CRUD operations for content management
 
 ## Data Flow
 
@@ -87,9 +95,9 @@ The application follows a modern full-stack architecture with clear separation b
 - **@hookform/resolvers**: Zod integration for form validation
 
 ### Content Management
-- **@sanity/client**: Sanity CMS client for content management
-- **sanity**: Sanity Studio for content editing
-- **@sanity/vision**: Query testing tool for Sanity
+- **Built-in Admin Panel**: Database-driven content management system
+- **News Article Management**: Full CRUD operations for articles with categories
+- **Admin Interface**: React-based admin panel at `/admin` route
 
 ### UI Dependencies
 - **@radix-ui/***: Headless UI primitives (30+ components)

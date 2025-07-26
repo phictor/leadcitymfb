@@ -13,6 +13,7 @@ import Contact from "@/pages/Contact";
 import AccountOpening from "@/pages/AccountOpening";
 import LoanApplication from "@/pages/LoanApplication";
 import News from "@/pages/News";
+import Admin from "@/pages/Admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -28,6 +29,7 @@ function Router() {
         <Route path="/account-opening" component={AccountOpening} />
         <Route path="/loan-application" component={LoanApplication} />
         <Route path="/news" component={News} />
+        <Route path="/admin" component={Admin} />
         <Route component={NotFound} />
       </Switch>
     </Layout>
