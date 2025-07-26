@@ -8,6 +8,9 @@ import {
   pageContent,
   pageContentSections,
   adminUsers,
+  heroSlides,
+  productCards,
+  faqItems,
   type User, 
   type InsertUser,
   type AccountApplication,
@@ -24,7 +27,13 @@ import {
   type PageContentSection,
   type InsertPageContentSection,
   type AdminUser,
-  type InsertAdminUser
+  type InsertAdminUser,
+  type HeroSlide,
+  type InsertHeroSlide,
+  type ProductCard,
+  type InsertProductCard,
+  type FaqItem,
+  type InsertFaqItem
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -73,6 +82,25 @@ export interface IStorage {
   // Admin users
   getAdminUser(username: string): Promise<AdminUser | null>;
   createAdminUser(user: InsertAdminUser): Promise<AdminUser>;
+  
+  // Homepage content management
+  // Hero slides
+  getHeroSlides(): Promise<HeroSlide[]>;
+  createHeroSlide(slide: InsertHeroSlide): Promise<HeroSlide>;
+  updateHeroSlide(id: number, slide: InsertHeroSlide): Promise<HeroSlide>;
+  deleteHeroSlide(id: number): Promise<void>;
+  
+  // Product cards
+  getProductCards(): Promise<ProductCard[]>;
+  createProductCard(card: InsertProductCard): Promise<ProductCard>;
+  updateProductCard(id: number, card: InsertProductCard): Promise<ProductCard>;
+  deleteProductCard(id: number): Promise<void>;
+  
+  // FAQ items
+  getFaqItems(): Promise<FaqItem[]>;
+  createFaqItem(item: InsertFaqItem): Promise<FaqItem>;
+  updateFaqItem(id: number, item: InsertFaqItem): Promise<FaqItem>;
+  deleteFaqItem(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -289,6 +317,85 @@ export class DatabaseStorage implements IStorage {
     this.checkDbConnection();
     const [newUser] = await db.insert(adminUsers).values(user).returning();
     return newUser;
+  }
+
+  // Homepage content management implementation
+  // Hero slides
+  async getHeroSlides(): Promise<HeroSlide[]> {
+    this.checkDbConnection();
+    return await db.select().from(heroSlides).where(eq(heroSlides.isActive, true)).orderBy(heroSlides.sortOrder);
+  }
+
+  async createHeroSlide(slide: InsertHeroSlide): Promise<HeroSlide> {
+    this.checkDbConnection();
+    const [newSlide] = await db.insert(heroSlides).values(slide).returning();
+    return newSlide;
+  }
+
+  async updateHeroSlide(id: number, slide: InsertHeroSlide): Promise<HeroSlide> {
+    this.checkDbConnection();
+    const [updatedSlide] = await db.update(heroSlides)
+      .set({ ...slide, updatedAt: new Date() })
+      .where(eq(heroSlides.id, id))
+      .returning();
+    return updatedSlide;
+  }
+
+  async deleteHeroSlide(id: number): Promise<void> {
+    this.checkDbConnection();
+    await db.delete(heroSlides).where(eq(heroSlides.id, id));
+  }
+
+  // Product cards
+  async getProductCards(): Promise<ProductCard[]> {
+    this.checkDbConnection();
+    return await db.select().from(productCards).where(eq(productCards.isActive, true)).orderBy(productCards.sortOrder);
+  }
+
+  async createProductCard(card: InsertProductCard): Promise<ProductCard> {
+    this.checkDbConnection();
+    const [newCard] = await db.insert(productCards).values(card).returning();
+    return newCard;
+  }
+
+  async updateProductCard(id: number, card: InsertProductCard): Promise<ProductCard> {
+    this.checkDbConnection();
+    const [updatedCard] = await db.update(productCards)
+      .set({ ...card, updatedAt: new Date() })
+      .where(eq(productCards.id, id))
+      .returning();
+    return updatedCard;
+  }
+
+  async deleteProductCard(id: number): Promise<void> {
+    this.checkDbConnection();
+    await db.delete(productCards).where(eq(productCards.id, id));
+  }
+
+  // FAQ items
+  async getFaqItems(): Promise<FaqItem[]> {
+    this.checkDbConnection();
+    return await db.select().from(faqItems).where(eq(faqItems.isActive, true)).orderBy(faqItems.sortOrder);
+  }
+
+  async createFaqItem(item: InsertFaqItem): Promise<FaqItem> {
+    this.checkDbConnection();
+    const [newItem] = await db.insert(faqItems).values(item).returning();
+    return newItem;
+  }
+
+  async updateFaqItem(id: number, item: InsertFaqItem): Promise<FaqItem> {
+    this.checkDbConnection();
+    const [updatedItem] = await db.update(faqItems)
+      .set({ ...item, updatedAt: new Date() })
+      .where(eq(faqItems.id, id))
+      .returning();
+    return updatedItem;
+  }
+
+  async deleteFaqItem(id: number): Promise<void> {
+    this.checkDbConnection();
+    await db.delete(faqItems).where(eq(faqItems.id, id));
   }
 }
 

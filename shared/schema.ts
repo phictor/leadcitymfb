@@ -115,6 +115,56 @@ export const adminUsers = pgTable("admin_users", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Homepage content management tables
+export const heroSlides = pgTable("hero_slides", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  primaryButtonText: text("primary_button_text").notNull(),
+  primaryButtonLink: text("primary_button_link").notNull(),
+  secondaryButtonText: text("secondary_button_text"),
+  secondaryButtonLink: text("secondary_button_link"),
+  backgroundImage: text("background_image").notNull(),
+  heroImage: text("hero_image"),
+  backgroundColor: text("background_color").notNull(),
+  statistic1Value: text("statistic1_value"),
+  statistic1Label: text("statistic1_label"),
+  statistic2Value: text("statistic2_value"),
+  statistic2Label: text("statistic2_label"),
+  statistic3Value: text("statistic3_value"),
+  statistic3Label: text("statistic3_label"),
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const productCards = pgTable("product_cards", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  features: text("features").notNull(), // JSON string of features array
+  buttonText: text("button_text").notNull(),
+  buttonLink: text("button_link").notNull(),
+  iconName: text("icon_name").notNull(), // Icon component name
+  backgroundColor: text("background_color").notNull(),
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const faqItems = pgTable("faq_items", {
+  id: serial("id").primaryKey(),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
+  category: text("category").notNull().default("general"),
+  isActive: boolean("is_active").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertAccountApplicationSchema = createInsertSchema(accountApplications).omit({
   id: true,
@@ -161,6 +211,24 @@ export const insertAdminUserSchema = createInsertSchema(adminUsers).omit({
   createdAt: true,
 });
 
+export const insertHeroSlideSchema = createInsertSchema(heroSlides).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertProductCardSchema = createInsertSchema(productCards).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertFaqItemSchema = createInsertSchema(faqItems).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type InsertAccountApplication = z.infer<typeof insertAccountApplicationSchema>;
 export type AccountApplication = typeof accountApplications.$inferSelect;
@@ -187,3 +255,12 @@ export type PageContentSection = typeof pageContentSections.$inferSelect;
 
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
 export type AdminUser = typeof adminUsers.$inferSelect;
+
+export type InsertHeroSlide = z.infer<typeof insertHeroSlideSchema>;
+export type HeroSlide = typeof heroSlides.$inferSelect;
+
+export type InsertProductCard = z.infer<typeof insertProductCardSchema>;
+export type ProductCard = typeof productCards.$inferSelect;
+
+export type InsertFaqItem = z.infer<typeof insertFaqItemSchema>;
+export type FaqItem = typeof faqItems.$inferSelect;

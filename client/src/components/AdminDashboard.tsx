@@ -13,6 +13,7 @@ import { useNewsArticles, useCreateNewsArticle, useUpdateNewsArticle, useDeleteN
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import PageContentManager from "@/components/PageContentManager";
+import HomepageContentManager from "@/components/HomepageContentManager";
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -185,8 +186,9 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </div>
 
         <Tabs defaultValue="news" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="news">News Articles</TabsTrigger>
+            <TabsTrigger value="homepage">Homepage</TabsTrigger>
             <TabsTrigger value="pages">Page Content</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
@@ -412,6 +414,10 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          <TabsContent value="homepage" className="space-y-6">
+            <HomepageContentManager />
           </TabsContent>
 
           <TabsContent value="pages" className="space-y-6">

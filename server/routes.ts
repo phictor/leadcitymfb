@@ -8,7 +8,10 @@ import {
   insertNewsArticleSchema,
   insertPageContentSchema,
   insertPageContentSectionSchema,
-  insertAdminUserSchema
+  insertAdminUserSchema,
+  insertHeroSlideSchema,
+  insertProductCardSchema,
+  insertFaqItemSchema
 } from "@shared/schema";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -245,6 +248,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         return res.status(401).json({ message: "Invalid credentials" });
       }
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Homepage Content Management APIs
+  
+  // Hero Slides
+  app.get("/api/hero-slides", async (req, res) => {
+    try {
+      const slides = await storage.getHeroSlides();
+      res.json(slides);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/hero-slides", async (req, res) => {
+    try {
+      const slideData = insertHeroSlideSchema.parse(req.body);
+      const slide = await storage.createHeroSlide(slideData);
+      res.status(201).json(slide);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid slide data" });
+    }
+  });
+
+  app.put("/api/hero-slides/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const slideData = insertHeroSlideSchema.parse(req.body);
+      const slide = await storage.updateHeroSlide(id, slideData);
+      res.json(slide);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid slide data" });
+    }
+  });
+
+  app.delete("/api/hero-slides/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteHeroSlide(id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Product Cards
+  app.get("/api/product-cards", async (req, res) => {
+    try {
+      const cards = await storage.getProductCards();
+      res.json(cards);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/product-cards", async (req, res) => {
+    try {
+      const cardData = insertProductCardSchema.parse(req.body);
+      const card = await storage.createProductCard(cardData);
+      res.status(201).json(card);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid card data" });
+    }
+  });
+
+  app.put("/api/product-cards/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const cardData = insertProductCardSchema.parse(req.body);
+      const card = await storage.updateProductCard(id, cardData);
+      res.json(card);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid card data" });
+    }
+  });
+
+  app.delete("/api/product-cards/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteProductCard(id);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // FAQ Items
+  app.get("/api/faq-items", async (req, res) => {
+    try {
+      const items = await storage.getFaqItems();
+      res.json(items);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/faq-items", async (req, res) => {
+    try {
+      const itemData = insertFaqItemSchema.parse(req.body);
+      const item = await storage.createFaqItem(itemData);
+      res.status(201).json(item);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid FAQ data" });
+    }
+  });
+
+  app.put("/api/faq-items/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const itemData = insertFaqItemSchema.parse(req.body);
+      const item = await storage.updateFaqItem(id, itemData);
+      res.json(item);
+    } catch (error) {
+      res.status(400).json({ message: "Invalid FAQ data" });
+    }
+  });
+
+  app.delete("/api/faq-items/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteFaqItem(id);
+      res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
