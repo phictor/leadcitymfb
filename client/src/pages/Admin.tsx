@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,15 +8,48 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit, Trash2, Calendar, User, Eye, Mail, Phone, Building, DollarSign, FileText, Clock } from "lucide-react";
+import { Plus, Edit, Trash2, Calendar, User, Eye, Mail, Phone, Building, DollarSign, FileText, Clock, LogOut, Settings, Home, MapPin, CreditCard } from "lucide-react";
 import { useNewsArticles, useCreateNewsArticle, useUpdateNewsArticle, useDeleteNewsArticle, type NewsArticle } from "@/hooks/useNews";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import AdminLogin from "@/components/AdminLogin";
 
 export default function Admin() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [pageContentDialog, setPageContentDialog] = useState<{isOpen: boolean, pageId: string, title: string}>({
+    isOpen: false,
+    pageId: '',
+    title: ''
+  });
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  // Check authentication on mount
+  useEffect(() => {
+    const auth = localStorage.getItem('adminAuth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminAuth');
+    setIsAuthenticated(false);
+    toast({
+      title: "Logged Out",
+      description: "You have been logged out successfully.",
+    });
+  };
+
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
 
   // Fetch data
   const { data: articles = [], isLoading, refetch } = useNewsArticles();
@@ -43,6 +76,64 @@ export default function Admin() {
     queryFn: async () => {
       const response = await fetch('/api/contact-messages');
       return response.ok ? response.json() : [];
+    }
+  });
+
+  // Page content queries
+  const { data: homeContent } = useQuery({
+    queryKey: ['page-content', 'home'],
+    queryFn: async () => {
+      const response = await fetch('/api/page-content/home');
+      return response.ok ? response.json() : null;
+    }
+  });
+
+  const { data: contactContent } = useQuery({
+    queryKey: ['page-content', 'contact'],
+    queryFn: async () => {
+      const response = await fetch('/api/page-content/contact');
+      return response.ok ? response.json() : null;
+    }
+  });
+
+  const { data: branchesContent } = useQuery({
+    queryKey: ['page-content', 'branches'],
+    queryFn: async () => {
+      const response = await fetch('/api/page-content/branches');
+      return response.ok ? response.json() : null;
+    }
+  });
+
+  const { data: bankingContent } = useQuery({
+    queryKey: ['page-content', 'banking'],
+    queryFn: async () => {
+      const response = await fetch('/api/page-content/banking');
+      return response.ok ? response.json() : null;
+    }
+  });
+
+  // Page content mutation
+  const updatePageContentMutation = useMutation({
+    mutationFn: async ({ pageId, title, content, metadata }: {pageId: string, title: string, content: string, metadata?: string}) => {
+      const response = await fetch(`/api/page-content/${pageId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ pageId, title, content, metadata })
+      });
+      if (!response.ok) {
+        throw new Error('Failed to update page content');
+      }
+      return response.json();
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['page-content', variables.pageId] });
+      toast({
+        title: "Content Updated",
+        description: "Page content has been updated successfully.",
+      });
+      setPageContentDialog({ isOpen: false, pageId: '', title: '' });
     }
   });
 
@@ -178,17 +269,47 @@ export default function Admin() {
     );
   }
 
+  const openPageContentDialog = (pageId: string, title: string) => {
+    setPageContentDialog({ isOpen: true, pageId, title });
+  };
+
+  const handlePageContentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get('title') as string;
+    const content = formData.get('content') as string;
+    const metadata = formData.get('metadata') as string;
+
+    updatePageContentMutation.mutate({
+      pageId: pageContentDialog.pageId,
+      title,
+      content,
+      metadata: metadata || undefined
+    });
+  };
+
   return (
     <div className="pt-16 min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold dark-green mb-4">Admin Panel</h1>
-          <p className="text-gray-600">Manage your Lead City MFB website content</p>
+        <div className="mb-8 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold dark-green mb-4">Admin Panel</h1>
+            <p className="text-gray-600">Manage your Lead City MFB website content</p>
+          </div>
+          <Button 
+            onClick={handleLogout}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
         </div>
 
         <Tabs defaultValue="news" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="news">News Articles</TabsTrigger>
+            <TabsTrigger value="pages">Page Content</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
             <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
@@ -413,6 +534,110 @@ export default function Admin() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="pages" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Home Page Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Home className="w-5 h-5 mr-2" />
+                    Home Page Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600">
+                      Current: {homeContent?.title || "Not set"}
+                    </p>
+                    <Button 
+                      onClick={() => openPageContentDialog('home', 'Home Page')}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit Home Content
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Contact Page Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Mail className="w-5 h-5 mr-2" />
+                    Contact Page Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600">
+                      Current: {contactContent?.title || "Not set"}
+                    </p>
+                    <Button 
+                      onClick={() => openPageContentDialog('contact', 'Contact Page')}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit Contact Content
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Branches Page Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <MapPin className="w-5 h-5 mr-2" />
+                    Branches Page Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600">
+                      Current: {branchesContent?.title || "Not set"}
+                    </p>
+                    <Button 
+                      onClick={() => openPageContentDialog('branches', 'Branches Page')}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit Branches Content
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Online Banking Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <CreditCard className="w-5 h-5 mr-2" />
+                    Online Banking Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <p className="text-sm text-gray-600">
+                      Current: {bankingContent?.title || "Not set"}
+                    </p>
+                    <Button 
+                      onClick={() => openPageContentDialog('banking', 'Online Banking Page')}
+                      className="w-full"
+                      variant="outline"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Edit Banking Content
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
 
@@ -706,6 +931,86 @@ export default function Admin() {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Page Content Dialog */}
+        <Dialog open={pageContentDialog.isOpen} onOpenChange={(open) => setPageContentDialog({...pageContentDialog, isOpen: open})}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit {pageContentDialog.title}</DialogTitle>
+              <DialogDescription>
+                Update the content for this page.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <form onSubmit={handlePageContentSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="pageTitle">Page Title</Label>
+                <Input
+                  id="pageTitle"
+                  name="title"
+                  defaultValue={
+                    pageContentDialog.pageId === 'home' ? homeContent?.title :
+                    pageContentDialog.pageId === 'contact' ? contactContent?.title :
+                    pageContentDialog.pageId === 'branches' ? branchesContent?.title :
+                    pageContentDialog.pageId === 'banking' ? bankingContent?.title : ''
+                  }
+                  placeholder="Enter page title"
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="pageContent">Page Content</Label>
+                <Textarea
+                  id="pageContent"
+                  name="content"
+                  defaultValue={
+                    pageContentDialog.pageId === 'home' ? homeContent?.content :
+                    pageContentDialog.pageId === 'contact' ? contactContent?.content :
+                    pageContentDialog.pageId === 'branches' ? branchesContent?.content :
+                    pageContentDialog.pageId === 'banking' ? bankingContent?.content : ''
+                  }
+                  placeholder="Enter page content (HTML supported)"
+                  rows={10}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="pageMetadata">Additional Settings (JSON format - optional)</Label>
+                <Textarea
+                  id="pageMetadata"
+                  name="metadata"
+                  defaultValue={
+                    pageContentDialog.pageId === 'home' ? homeContent?.metadata :
+                    pageContentDialog.pageId === 'contact' ? contactContent?.metadata :
+                    pageContentDialog.pageId === 'branches' ? branchesContent?.metadata :
+                    pageContentDialog.pageId === 'banking' ? bankingContent?.metadata : ''
+                  }
+                  placeholder='{"subtitle": "Welcome message", "buttonText": "Get Started"}'
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <Button 
+                  type="submit" 
+                  className="flex-1 bg-brand-green hover:bg-dark-green"
+                  disabled={updatePageContentMutation.isPending}
+                >
+                  {updatePageContentMutation.isPending ? "Updating..." : "Update Content"}
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => setPageContentDialog({isOpen: false, pageId: '', title: ''})}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

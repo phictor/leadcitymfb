@@ -5,6 +5,8 @@ import {
   contactMessages, 
   branches,
   newsArticles,
+  pageContent,
+  adminUsers,
   type User, 
   type InsertUser,
   type AccountApplication,
@@ -15,7 +17,11 @@ import {
   type InsertContactMessage,
   type Branch,
   type NewsArticle,
-  type InsertNewsArticle
+  type InsertNewsArticle,
+  type PageContent,
+  type InsertPageContent,
+  type AdminUser,
+  type InsertAdminUser
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc } from "drizzle-orm";
@@ -50,6 +56,14 @@ export interface IStorage {
   createNewsArticle(article: InsertNewsArticle): Promise<NewsArticle>;
   updateNewsArticle(id: number, article: InsertNewsArticle): Promise<NewsArticle>;
   deleteNewsArticle(id: number): Promise<void>;
+  
+  // Page content
+  getPageContent(pageId: string): Promise<PageContent | null>;
+  updatePageContent(pageId: string, content: InsertPageContent): Promise<PageContent>;
+  
+  // Admin users
+  getAdminUser(username: string): Promise<AdminUser | null>;
+  createAdminUser(user: InsertAdminUser): Promise<AdminUser>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -200,6 +214,43 @@ export class DatabaseStorage implements IStorage {
   async deleteNewsArticle(id: number): Promise<void> {
     this.checkDbConnection();
     await db.delete(newsArticles).where(eq(newsArticles.id, id));
+  }
+
+  // Page content methods
+  async getPageContent(pageId: string): Promise<PageContent | null> {
+    this.checkDbConnection();
+    const [content] = await db.select().from(pageContent).where(eq(pageContent.pageId, pageId));
+    return content || null;
+  }
+
+  async updatePageContent(pageId: string, content: InsertPageContent): Promise<PageContent> {
+    this.checkDbConnection();
+    const existing = await this.getPageContent(pageId);
+    
+    if (existing) {
+      const [updated] = await db
+        .update(pageContent)
+        .set({ ...content, updatedAt: new Date() })
+        .where(eq(pageContent.pageId, pageId))
+        .returning();
+      return updated;
+    } else {
+      const [created] = await db.insert(pageContent).values(content).returning();
+      return created;
+    }
+  }
+
+  // Admin user methods
+  async getAdminUser(username: string): Promise<AdminUser | null> {
+    this.checkDbConnection();
+    const [user] = await db.select().from(adminUsers).where(eq(adminUsers.username, username));
+    return user || null;
+  }
+
+  async createAdminUser(user: InsertAdminUser): Promise<AdminUser> {
+    this.checkDbConnection();
+    const [newUser] = await db.insert(adminUsers).values(user).returning();
+    return newUser;
   }
 }
 

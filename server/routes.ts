@@ -5,8 +5,11 @@ import {
   insertAccountApplicationSchema, 
   insertLoanApplicationSchema, 
   insertContactMessageSchema,
-  insertNewsArticleSchema 
+  insertNewsArticleSchema,
+  insertPageContentSchema,
+  insertAdminUserSchema
 } from "@shared/schema";
+import bcrypt from "bcrypt";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -146,6 +149,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = parseInt(req.params.id);
       await storage.deleteNewsArticle(id);
       res.json({ message: "Article deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Page content management
+  app.get("/api/page-content/:pageId", async (req, res) => {
+    try {
+      const content = await storage.getPageContent(req.params.pageId);
+      res.json(content);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.put("/api/page-content/:pageId", async (req, res) => {
+    try {
+      const validatedData = insertPageContentSchema.parse({
+        pageId: req.params.pageId,
+        ...req.body
+      });
+      const content = await storage.updatePageContent(req.params.pageId, validatedData);
+      res.json(content);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
+  // Admin authentication
+  app.post("/api/admin/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      const user = await storage.getAdminUser(username);
+      
+      if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+        return res.status(401).json({ message: "Invalid credentials" });
+      }
+      
+      res.json({ success: true, message: "Login successful" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/admin/setup", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      // Check if admin already exists
+      const existing = await storage.getAdminUser(username);
+      if (existing) {
+        return res.status(400).json({ message: "Admin user already exists" });
+      }
+      
+      const passwordHash = await bcrypt.hash(password, 10);
+      await storage.createAdminUser({ username, passwordHash });
+      
+      res.json({ success: true, message: "Admin user created" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
