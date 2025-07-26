@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus, Edit, Trash2, Calendar, User, Eye } from "lucide-react";
 import { useNewsArticles, useCreateNewsArticle, useUpdateNewsArticle, useDeleteNewsArticle, type NewsArticle } from "@/hooks/useNews";
 import { useToast } from "@/hooks/use-toast";
@@ -191,6 +191,9 @@ export default function Admin() {
                     <DialogTitle>
                       {selectedArticle ? "Edit Article" : "Create New Article"}
                     </DialogTitle>
+                    <DialogDescription>
+                      {selectedArticle ? "Update the article details below." : "Fill in the form below to create a new news article."}
+                    </DialogDescription>
                   </DialogHeader>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
