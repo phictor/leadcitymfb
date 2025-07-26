@@ -8,9 +8,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Plus, Edit, Trash2, Calendar, User, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, Calendar, User, Eye, Mail, Phone, Building, DollarSign, FileText, Clock } from "lucide-react";
 import { useNewsArticles, useCreateNewsArticle, useUpdateNewsArticle, useDeleteNewsArticle, type NewsArticle } from "@/hooks/useNews";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Admin() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -19,6 +20,31 @@ export default function Admin() {
 
   // Fetch data
   const { data: articles = [], isLoading, refetch } = useNewsArticles();
+  
+  // Fetch applications and messages
+  const { data: accountApplications = [] } = useQuery({
+    queryKey: ['account-applications'],
+    queryFn: async () => {
+      const response = await fetch('/api/account-applications');
+      return response.ok ? response.json() : [];
+    }
+  });
+
+  const { data: loanApplications = [] } = useQuery({
+    queryKey: ['loan-applications'], 
+    queryFn: async () => {
+      const response = await fetch('/api/loan-applications');
+      return response.ok ? response.json() : [];
+    }
+  });
+
+  const { data: contactMessages = [] } = useQuery({
+    queryKey: ['contact-messages'],
+    queryFn: async () => {
+      const response = await fetch('/api/contact-messages');
+      return response.ok ? response.json() : [];
+    }
+  });
 
   // Mutations
   const createMutation = useCreateNewsArticle();
@@ -30,7 +56,7 @@ export default function Admin() {
     title: "",
     summary: "",
     content: "",
-    category: "Technology",
+    category: "Technology" as "Technology" | "Education" | "Business" | "Security",
     author: "",
     publishDate: "",
     readTime: "",
@@ -44,7 +70,7 @@ export default function Admin() {
       title: "",
       summary: "",
       content: "",
-      category: "Technology",
+      category: "Technology" as "Technology" | "Education" | "Business" | "Security",
       author: "",
       publishDate: "",
       readTime: "",
@@ -209,7 +235,7 @@ export default function Admin() {
                       </div>
                       <div>
                         <Label htmlFor="category">Category</Label>
-                        <Select value={formData.category} onValueChange={(value) => setFormData({...formData, category: value})}>
+                        <Select value={formData.category} onValueChange={(value: "Technology" | "Education" | "Business" | "Security") => setFormData({...formData, category: value})}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
@@ -390,37 +416,294 @@ export default function Admin() {
             </div>
           </TabsContent>
 
-          <TabsContent value="applications">
+          <TabsContent value="applications" className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Account Applications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <User className="w-5 h-5 mr-2" />
+                    Account Applications ({accountApplications.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {accountApplications.slice(0, 5).map((app: any) => (
+                      <div key={app.id} className="border rounded p-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium">{app.firstName} {app.lastName}</h4>
+                            <p className="text-sm text-gray-600">{app.email}</p>
+                            <div className="flex items-center mt-2">
+                              <Badge variant={app.status === 'pending' ? 'secondary' : 'default'}>
+                                {app.status}
+                              </Badge>
+                              <span className="text-xs text-gray-500 ml-2">
+                                {app.accountType}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(app.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {accountApplications.length === 0 && (
+                      <p className="text-gray-500 text-center py-4">No applications yet</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Loan Applications */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2" />
+                    Loan Applications ({loanApplications.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {loanApplications.slice(0, 5).map((app: any) => (
+                      <div key={app.id} className="border rounded p-3">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h4 className="font-medium">{app.firstName} {app.lastName}</h4>
+                            <p className="text-sm text-gray-600">{app.businessName}</p>
+                            <div className="flex items-center mt-2">
+                              <Badge variant={app.status === 'pending' ? 'secondary' : 'default'}>
+                                {app.status}
+                              </Badge>
+                              <span className="text-xs text-gray-500 ml-2">
+                                ₦{app.loanAmount?.toLocaleString()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {new Date(app.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {loanApplications.length === 0 && (
+                      <p className="text-gray-500 text-center py-4">No applications yet</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="messages" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Account & Loan Applications</CardTitle>
+                <CardTitle className="flex items-center">
+                  <Mail className="w-5 h-5 mr-2" />
+                  Contact Messages ({contactMessages.length})
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600">Applications management coming soon...</p>
+                <div className="space-y-4">
+                  {contactMessages.map((message: any) => (
+                    <Card key={message.id} className="p-4">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-medium">{message.firstName} {message.lastName}</h4>
+                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                            <div className="flex items-center">
+                              <Mail className="w-4 h-4 mr-1" />
+                              {message.email}
+                            </div>
+                            {message.phone && (
+                              <div className="flex items-center">
+                                <Phone className="w-4 h-4 mr-1" />
+                                {message.phone}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant={message.status === 'new' ? 'secondary' : 'default'}>
+                            {message.status}
+                          </Badge>
+                          <div className="text-xs text-gray-500 mt-1">
+                            {new Date(message.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mb-2">
+                        <h5 className="font-medium text-sm">Subject: {message.subject}</h5>
+                      </div>
+                      <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded">
+                        {message.message}
+                      </div>
+                    </Card>
+                  ))}
+                  {contactMessages.length === 0 && (
+                    <p className="text-gray-500 text-center py-8">No messages yet</p>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="messages">
-            <Card>
-              <CardHeader>
-                <CardTitle>Contact Messages</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">Message management coming soon...</p>
-              </CardContent>
-            </Card>
-          </TabsContent>
+          <TabsContent value="analytics" className="space-y-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <FileText className="w-5 h-5 mr-2 text-brand-green" />
+                    Articles
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{articles.length}</div>
+                  <p className="text-sm text-gray-600">Published articles</p>
+                </CardContent>
+              </Card>
 
-          <TabsContent value="analytics">
-            <Card>
-              <CardHeader>
-                <CardTitle>Website Analytics</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">Analytics dashboard coming soon...</p>
-              </CardContent>
-            </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <User className="w-5 h-5 mr-2 text-blue-600" />
+                    Account Apps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{accountApplications.length}</div>
+                  <p className="text-sm text-gray-600">Account applications</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <DollarSign className="w-5 h-5 mr-2 text-orange-600" />
+                    Loan Apps
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{loanApplications.length}</div>
+                  <p className="text-sm text-gray-600">Loan applications</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center">
+                    <Mail className="w-5 h-5 mr-2 text-purple-600" />
+                    Messages
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{contactMessages.length}</div>
+                  <p className="text-sm text-gray-600">Contact messages</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {/* Recent articles */}
+                    {articles.slice(0, 3).map((article) => (
+                      <div key={article.id} className="flex items-center">
+                        <FileText className="w-4 h-4 mr-2 text-brand-green" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{article.title}</p>
+                          <p className="text-xs text-gray-500">Article published</p>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(article.publishDate).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {/* Recent applications */}
+                    {accountApplications.slice(0, 2).map((app: any) => (
+                      <div key={`acc-${app.id}`} className="flex items-center">
+                        <User className="w-4 h-4 mr-2 text-blue-600" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{app.firstName} {app.lastName}</p>
+                          <p className="text-xs text-gray-500">Account application</p>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(app.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {/* Recent messages */}
+                    {contactMessages.slice(0, 2).map((msg: any) => (
+                      <div key={`msg-${msg.id}`} className="flex items-center">
+                        <Mail className="w-4 h-4 mr-2 text-purple-600" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{msg.firstName} {msg.lastName}</p>
+                          <p className="text-xs text-gray-500">Contact message</p>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {new Date(msg.createdAt).toLocaleDateString()}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Quick Stats</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between text-sm">
+                        <span>Featured Articles</span>
+                        <span>{articles.filter(a => a.featured).length}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div 
+                          className="bg-brand-green h-2 rounded-full" 
+                          style={{width: `${articles.length > 0 ? (articles.filter(a => a.featured).length / articles.length) * 100 : 0}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between text-sm">
+                        <span>New Messages</span>
+                        <span>{contactMessages.filter((m: any) => m.status === 'new').length}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div 
+                          className="bg-purple-600 h-2 rounded-full" 
+                          style={{width: `${contactMessages.length > 0 ? (contactMessages.filter((m: any) => m.status === 'new').length / contactMessages.length) * 100 : 0}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex justify-between text-sm">
+                        <span>Pending Applications</span>
+                        <span>{accountApplications.filter((a: any) => a.status === 'pending').length + loanApplications.filter((a: any) => a.status === 'pending').length}</span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                        <div 
+                          className="bg-orange-600 h-2 rounded-full" 
+                          style={{width: `${(accountApplications.length + loanApplications.length) > 0 ? ((accountApplications.filter((a: any) => a.status === 'pending').length + loanApplications.filter((a: any) => a.status === 'pending').length) / (accountApplications.length + loanApplications.length)) * 100 : 0}%`}}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
