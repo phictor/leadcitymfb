@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Users, DollarSign, MapPin, Smartphone, Shield, Clock, Building2, CreditCard, PiggyBank } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users, MapPin, Smartphone, Shield, Clock, Building2, CreditCard, PiggyBank, Banknote } from "lucide-react";
 import { Link } from "wouter";
 
 interface HeroSlide {
@@ -26,6 +26,7 @@ interface HeroSlide {
   }[];
   backgroundImage?: string;
   backgroundColor?: string;
+  heroImage?: string;
 }
 
 const heroSlides: HeroSlide[] = [
@@ -51,7 +52,7 @@ const heroSlides: HeroSlide[] = [
         label: "Happy Customers"
       },
       {
-        icon: DollarSign,
+        icon: Banknote,
         value: "₦2B+",
         label: "Loans Disbursed"
       },
@@ -61,7 +62,8 @@ const heroSlides: HeroSlide[] = [
         label: "Branch Location"
       }
     ],
-    backgroundColor: "from-emerald-600 to-emerald-800"
+    backgroundColor: "from-emerald-600 to-emerald-800",
+    heroImage: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     id: 2,
@@ -95,7 +97,8 @@ const heroSlides: HeroSlide[] = [
         label: "Transactions"
       }
     ],
-    backgroundColor: "from-orange-600 to-orange-700"
+    backgroundColor: "from-orange-600 to-orange-700",
+    heroImage: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     id: 3,
@@ -119,7 +122,7 @@ const heroSlides: HeroSlide[] = [
         label: "Quick Approval"
       },
       {
-        icon: DollarSign,
+        icon: Banknote,
         value: "5%",
         label: "Starting Rate"
       },
@@ -129,7 +132,8 @@ const heroSlides: HeroSlide[] = [
         label: "Loans Approved"
       }
     ],
-    backgroundColor: "from-blue-600 to-blue-700"
+    backgroundColor: "from-blue-600 to-blue-700",
+    heroImage: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     id: 4,
@@ -148,7 +152,7 @@ const heroSlides: HeroSlide[] = [
     },
     stats: [
       {
-        icon: DollarSign,
+        icon: Banknote,
         value: "12%",
         label: "Annual Returns"
       },
@@ -163,7 +167,8 @@ const heroSlides: HeroSlide[] = [
         label: "Active Savers"
       }
     ],
-    backgroundColor: "from-purple-600 to-purple-700"
+    backgroundColor: "from-purple-600 to-purple-700",
+    heroImage: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   }
 ];
 
@@ -276,29 +281,41 @@ export default function HeroCarousel() {
             )}
           </div>
 
-          {/* Visual Element - Banking Icons */}
+          {/* Visual Element - Hero Image */}
           <div className="hidden lg:flex justify-center items-center opacity-0 animate-[fadeInRight_0.8s_ease-out_0.6s_forwards]">
             <div className="relative w-80 h-80">
-              {/* Central Banking Icon */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                {currentSlide === 0 && <Building2 className="w-16 h-16 text-white" />}
-                {currentSlide === 1 && <Smartphone className="w-16 h-16 text-white" />}
-                {currentSlide === 2 && <CreditCard className="w-16 h-16 text-white" />}
-                {currentSlide === 3 && <PiggyBank className="w-16 h-16 text-white" />}
+              {/* Hero Image */}
+              {currentSlideData.heroImage && (
+                <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl">
+                  <img
+                    src={currentSlideData.heroImage}
+                    alt={currentSlideData.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/20" />
+                </div>
+              )}
+              
+              {/* Central Banking Icon Overlay */}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
+                {currentSlide === 0 && <Building2 className="w-12 h-12 text-emerald-700" />}
+                {currentSlide === 1 && <Smartphone className="w-12 h-12 text-orange-700" />}
+                {currentSlide === 2 && <CreditCard className="w-12 h-12 text-blue-700" />}
+                {currentSlide === 3 && <PiggyBank className="w-12 h-12 text-purple-700" />}
               </div>
               
               {/* Floating Elements */}
-              <div className="absolute top-8 left-16 w-16 h-16 bg-white/10 rounded-full flex items-center justify-center animate-bounce">
-                <DollarSign className="w-8 h-8 text-white/80" />
+              <div className="absolute -top-4 -left-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-bounce">
+                <Banknote className="w-6 h-6 text-white" />
               </div>
-              <div className="absolute top-16 right-8 w-12 h-12 bg-white/10 rounded-full flex items-center justify-center animate-pulse">
-                <Shield className="w-6 h-6 text-white/80" />
+              <div className="absolute -top-4 -right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-pulse">
+                <Shield className="w-5 h-5 text-white" />
               </div>
-              <div className="absolute bottom-16 left-8 w-14 h-14 bg-white/10 rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
-                <Users className="w-7 h-7 text-white/80" />
+              <div className="absolute -bottom-4 -left-4 w-11 h-11 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
+                <Users className="w-5 h-5 text-white" />
               </div>
-              <div className="absolute bottom-8 right-16 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center animate-pulse" style={{ animationDelay: '1s' }}>
-                <Clock className="w-5 h-5 text-white/80" />
+              <div className="absolute -bottom-4 -right-4 w-9 h-9 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-pulse" style={{ animationDelay: '1s' }}>
+                <Clock className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
