@@ -7,6 +7,7 @@ import {
   insertContactMessageSchema,
   insertNewsArticleSchema,
   insertPageContentSchema,
+  insertPageContentSectionSchema,
   insertAdminUserSchema
 } from "@shared/schema";
 import bcrypt from "bcrypt";
@@ -178,6 +179,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         res.status(500).json({ message: "Internal server error" });
       }
+    }
+  });
+
+  // Page content sections management
+  app.get("/api/page-content-sections/:pageId", async (req, res) => {
+    try {
+      const sections = await storage.getPageContentSections(req.params.pageId);
+      res.json(sections);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.post("/api/page-content-sections", async (req, res) => {
+    try {
+      const validatedData = insertPageContentSectionSchema.parse(req.body);
+      const section = await storage.createPageContentSection(validatedData);
+      res.json(section);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
+  app.put("/api/page-content-sections/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const validatedData = insertPageContentSectionSchema.parse(req.body);
+      const section = await storage.updatePageContentSection(id, validatedData);
+      res.json(section);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        res.status(400).json({ message: "Invalid input data", errors: error.errors });
+      } else {
+        res.status(500).json({ message: "Internal server error" });
+      }
+    }
+  });
+
+  app.delete("/api/page-content-sections/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deletePageContentSection(id);
+      res.json({ message: "Section deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
     }
   });
 

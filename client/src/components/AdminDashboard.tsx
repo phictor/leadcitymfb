@@ -12,6 +12,7 @@ import { Plus, Edit, Trash2, Calendar, User, Eye, Mail, Phone, Building, DollarS
 import { useNewsArticles, useCreateNewsArticle, useUpdateNewsArticle, useDeleteNewsArticle, type NewsArticle } from "@/hooks/useNews";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import PageContentManager from "@/components/PageContentManager";
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -20,11 +21,7 @@ interface AdminDashboardProps {
 export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
-  const [pageContentDialog, setPageContentDialog] = useState<{isOpen: boolean, pageId: string, title: string}>({
-    isOpen: false,
-    pageId: '',
-    title: ''
-  });
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -56,63 +53,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   });
 
-  // Page content queries
-  const { data: homeContent } = useQuery({
-    queryKey: ['page-content', 'home'],
-    queryFn: async () => {
-      const response = await fetch('/api/page-content/home');
-      return response.ok ? response.json() : null;
-    }
-  });
 
-  const { data: contactContent } = useQuery({
-    queryKey: ['page-content', 'contact'],
-    queryFn: async () => {
-      const response = await fetch('/api/page-content/contact');
-      return response.ok ? response.json() : null;
-    }
-  });
-
-  const { data: branchesContent } = useQuery({
-    queryKey: ['page-content', 'branches'],
-    queryFn: async () => {
-      const response = await fetch('/api/page-content/branches');
-      return response.ok ? response.json() : null;
-    }
-  });
-
-  const { data: bankingContent } = useQuery({
-    queryKey: ['page-content', 'banking'],
-    queryFn: async () => {
-      const response = await fetch('/api/page-content/banking');
-      return response.ok ? response.json() : null;
-    }
-  });
-
-  // Page content mutation
-  const updatePageContentMutation = useMutation({
-    mutationFn: async ({ pageId, title, content, metadata }: {pageId: string, title: string, content: string, metadata?: string}) => {
-      const response = await fetch(`/api/page-content/${pageId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ pageId, title, content, metadata })
-      });
-      if (!response.ok) {
-        throw new Error('Failed to update page content');
-      }
-      return response.json();
-    },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['page-content', variables.pageId] });
-      toast({
-        title: "Content Updated",
-        description: "Page content has been updated successfully.",
-      });
-      setPageContentDialog({ isOpen: false, pageId: '', title: '' });
-    }
-  });
 
   // Mutations
   const createMutation = useCreateNewsArticle();
@@ -166,9 +107,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     setIsDialogOpen(true);
   };
 
-  const openPageContentDialog = (pageId: string, title: string) => {
-    setPageContentDialog({ isOpen: true, pageId, title });
-  };
+
 
   const handleArticleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,20 +153,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     }
   };
 
-  const handlePageContentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get('title') as string;
-    const content = formData.get('content') as string;
-    const metadata = formData.get('metadata') as string;
 
-    updatePageContentMutation.mutate({
-      pageId: pageContentDialog.pageId,
-      title,
-      content,
-      metadata: metadata || undefined
-    });
-  };
 
   if (isLoading) {
     return (
@@ -489,107 +415,30 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </TabsContent>
 
           <TabsContent value="pages" className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Home Page Content */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Home className="w-5 h-5 mr-2" />
-                    Home Page Content
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Current: {homeContent?.title || "Not set"}
-                    </p>
-                    <Button 
-                      onClick={() => openPageContentDialog('home', 'Home Page')}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Home Content
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+            <Tabs defaultValue="home" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="home">Home Page</TabsTrigger>
+                <TabsTrigger value="contact">Contact Page</TabsTrigger>
+                <TabsTrigger value="branches">Branches Page</TabsTrigger>
+                <TabsTrigger value="banking">Online Banking</TabsTrigger>
+              </TabsList>
 
-              {/* Contact Page Content */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Mail className="w-5 h-5 mr-2" />
-                    Contact Page Content
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Current: {contactContent?.title || "Not set"}
-                    </p>
-                    <Button 
-                      onClick={() => openPageContentDialog('contact', 'Contact Page')}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Contact Content
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <TabsContent value="home">
+                <PageContentManager pageId="home" pageName="Home Page" />
+              </TabsContent>
 
-              {/* Branches Page Content */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <MapPin className="w-5 h-5 mr-2" />
-                    Branches Page Content
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Current: {branchesContent?.title || "Not set"}
-                    </p>
-                    <Button 
-                      onClick={() => openPageContentDialog('branches', 'Branches Page')}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Branches Content
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+              <TabsContent value="contact">
+                <PageContentManager pageId="contact" pageName="Contact Page" />
+              </TabsContent>
 
-              {/* Online Banking Content */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <CreditCard className="w-5 h-5 mr-2" />
-                    Online Banking Content
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-600">
-                      Current: {bankingContent?.title || "Not set"}
-                    </p>
-                    <Button 
-                      onClick={() => openPageContentDialog('banking', 'Online Banking Page')}
-                      className="w-full"
-                      variant="outline"
-                    >
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit Banking Content
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+              <TabsContent value="branches">
+                <PageContentManager pageId="branches" pageName="Branches Page" />
+              </TabsContent>
+
+              <TabsContent value="banking">
+                <PageContentManager pageId="banking" pageName="Online Banking Page" />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-6">
@@ -782,85 +631,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           </TabsContent>
         </Tabs>
 
-        {/* Page Content Dialog */}
-        <Dialog open={pageContentDialog.isOpen} onOpenChange={(open) => setPageContentDialog({...pageContentDialog, isOpen: open})}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Edit {pageContentDialog.title}</DialogTitle>
-              <DialogDescription>
-                Update the content for this page.
-              </DialogDescription>
-            </DialogHeader>
-            
-            <form onSubmit={handlePageContentSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="pageTitle">Page Title</Label>
-                <Input
-                  id="pageTitle"
-                  name="title"
-                  defaultValue={
-                    pageContentDialog.pageId === 'home' ? homeContent?.title :
-                    pageContentDialog.pageId === 'contact' ? contactContent?.title :
-                    pageContentDialog.pageId === 'branches' ? branchesContent?.title :
-                    pageContentDialog.pageId === 'banking' ? bankingContent?.title : ''
-                  }
-                  placeholder="Enter page title"
-                  required
-                />
-              </div>
 
-              <div>
-                <Label htmlFor="pageContent">Page Content</Label>
-                <Textarea
-                  id="pageContent"
-                  name="content"
-                  defaultValue={
-                    pageContentDialog.pageId === 'home' ? homeContent?.content :
-                    pageContentDialog.pageId === 'contact' ? contactContent?.content :
-                    pageContentDialog.pageId === 'branches' ? branchesContent?.content :
-                    pageContentDialog.pageId === 'banking' ? bankingContent?.content : ''
-                  }
-                  placeholder="Enter page content (HTML supported)"
-                  rows={10}
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="pageMetadata">Additional Settings (JSON format - optional)</Label>
-                <Textarea
-                  id="pageMetadata"
-                  name="metadata"
-                  defaultValue={
-                    pageContentDialog.pageId === 'home' ? homeContent?.metadata :
-                    pageContentDialog.pageId === 'contact' ? contactContent?.metadata :
-                    pageContentDialog.pageId === 'branches' ? branchesContent?.metadata :
-                    pageContentDialog.pageId === 'banking' ? bankingContent?.metadata : ''
-                  }
-                  placeholder='{"subtitle": "Welcome message", "buttonText": "Get Started"}'
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex gap-2 pt-4">
-                <Button 
-                  type="submit" 
-                  className="flex-1 bg-brand-green hover:bg-dark-green"
-                  disabled={updatePageContentMutation.isPending}
-                >
-                  {updatePageContentMutation.isPending ? "Updating..." : "Update Content"}
-                </Button>
-                <Button 
-                  type="button" 
-                  variant="outline"
-                  onClick={() => setPageContentDialog({isOpen: false, pageId: '', title: ''})}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );

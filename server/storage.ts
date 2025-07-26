@@ -6,6 +6,7 @@ import {
   branches,
   newsArticles,
   pageContent,
+  pageContentSections,
   adminUsers,
   type User, 
   type InsertUser,
@@ -20,6 +21,8 @@ import {
   type InsertNewsArticle,
   type PageContent,
   type InsertPageContent,
+  type PageContentSection,
+  type InsertPageContentSection,
   type AdminUser,
   type InsertAdminUser
 } from "@shared/schema";
@@ -60,6 +63,12 @@ export interface IStorage {
   // Page content
   getPageContent(pageId: string): Promise<PageContent | null>;
   updatePageContent(pageId: string, content: InsertPageContent): Promise<PageContent>;
+  
+  // Page content sections
+  getPageContentSections(pageId: string): Promise<PageContentSection[]>;
+  createPageContentSection(section: InsertPageContentSection): Promise<PageContentSection>;
+  updatePageContentSection(id: number, section: InsertPageContentSection): Promise<PageContentSection>;
+  deletePageContentSection(id: number): Promise<void>;
   
   // Admin users
   getAdminUser(username: string): Promise<AdminUser | null>;
@@ -238,6 +247,35 @@ export class DatabaseStorage implements IStorage {
       const [created] = await db.insert(pageContent).values(content).returning();
       return created;
     }
+  }
+
+  // Page content sections methods
+  async getPageContentSections(pageId: string): Promise<PageContentSection[]> {
+    this.checkDbConnection();
+    return await db.select().from(pageContentSections)
+      .where(eq(pageContentSections.pageId, pageId))
+      .orderBy(pageContentSections.orderIndex);
+  }
+
+  async createPageContentSection(section: InsertPageContentSection): Promise<PageContentSection> {
+    this.checkDbConnection();
+    const [newSection] = await db.insert(pageContentSections).values(section).returning();
+    return newSection;
+  }
+
+  async updatePageContentSection(id: number, section: InsertPageContentSection): Promise<PageContentSection> {
+    this.checkDbConnection();
+    const [updatedSection] = await db
+      .update(pageContentSections)
+      .set({ ...section, updatedAt: new Date() })
+      .where(eq(pageContentSections.id, id))
+      .returning();
+    return updatedSection;
+  }
+
+  async deletePageContentSection(id: number): Promise<void> {
+    this.checkDbConnection();
+    await db.delete(pageContentSections).where(eq(pageContentSections.id, id));
   }
 
   // Admin user methods

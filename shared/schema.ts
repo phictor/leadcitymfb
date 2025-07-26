@@ -92,6 +92,22 @@ export const pageContent = pgTable("page_content", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const pageContentSections = pgTable("page_content_sections", {
+  id: serial("id").primaryKey(),
+  pageId: text("page_id").notNull(), // 'home', 'contact', 'branches', 'banking'
+  sectionType: text("section_type").notNull(), // 'hero', 'feature', 'testimonial', 'gallery', 'text', 'cta'
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  image: text("image"),
+  buttonText: text("button_text"),
+  buttonLink: text("button_link"),
+  orderIndex: integer("order_index").notNull().default(0),
+  isVisible: boolean("is_visible").default(true),
+  metadata: text("metadata"), // JSON for additional section-specific data
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const adminUsers = pgTable("admin_users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
@@ -134,6 +150,12 @@ export const insertPageContentSchema = createInsertSchema(pageContent).omit({
   updatedAt: true,
 });
 
+export const insertPageContentSectionSchema = createInsertSchema(pageContentSections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertAdminUserSchema = createInsertSchema(adminUsers).omit({
   id: true,
   createdAt: true,
@@ -159,6 +181,9 @@ export type NewsArticle = typeof newsArticles.$inferSelect;
 
 export type InsertPageContent = z.infer<typeof insertPageContentSchema>;
 export type PageContent = typeof pageContent.$inferSelect;
+
+export type InsertPageContentSection = z.infer<typeof insertPageContentSectionSchema>;
+export type PageContentSection = typeof pageContentSections.$inferSelect;
 
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
 export type AdminUser = typeof adminUsers.$inferSelect;
