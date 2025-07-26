@@ -63,7 +63,7 @@ const heroSlides: HeroSlide[] = [
       }
     ],
     backgroundColor: "from-emerald-600 to-emerald-800",
-    heroImage: "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    heroImage: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   },
   {
     id: 2,
@@ -218,30 +218,27 @@ export default function HeroCarousel() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid lg:grid-cols-2 gap-8 items-center min-h-[500px]">
           {/* Text Content */}
-          <div className="text-center lg:text-left">
-            <div className="mb-4">
-              <p className="text-white/90 text-lg font-medium mb-2 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.2s_forwards]">
-                {currentSlideData.subtitle}
-              </p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.4s_forwards]">
+          <div className="text-left">
+            <div className="mb-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight opacity-0 animate-[fadeInUp_0.6s_ease-out_0.4s_forwards]">
                 {currentSlideData.title}
               </h1>
-              <p className="text-xl text-white/90 mb-8 max-w-2xl opacity-0 animate-[fadeInUp_0.6s_ease-out_0.6s_forwards]">
+              <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl leading-relaxed opacity-0 animate-[fadeInUp_0.6s_ease-out_0.6s_forwards]">
                 {currentSlideData.description}
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-12 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.8s_forwards]">
+            <div className="flex flex-col sm:flex-row gap-4 mb-12 opacity-0 animate-[fadeInUp_0.6s_ease-out_0.8s_forwards]">
               <Link href={currentSlideData.primaryButton.link}>
                 <Button 
                   size="lg" 
-                  className="bg-white text-emerald-700 hover:bg-gray-100 font-semibold px-8 py-3 shadow-lg"
+                  className="bg-white text-emerald-700 hover:bg-gray-100 font-semibold px-8 py-4 rounded-lg shadow-lg text-base"
                 >
-                  {currentSlideData.primaryButton.text}
+                  🏦 {currentSlideData.primaryButton.text}
                 </Button>
               </Link>
               
@@ -250,9 +247,9 @@ export default function HeroCarousel() {
                   <Button 
                     size="lg" 
                     variant="outline" 
-                    className="border-white text-white hover:bg-white hover:text-emerald-700 font-semibold px-8 py-3 shadow-lg"
+                    className="border-2 border-white text-white hover:bg-white hover:text-emerald-700 font-semibold px-8 py-4 rounded-lg shadow-lg text-base"
                   >
-                    {currentSlideData.secondaryButton.text}
+                    💰 {currentSlideData.secondaryButton.text}
                   </Button>
                 </Link>
               )}
@@ -261,61 +258,49 @@ export default function HeroCarousel() {
             {/* Statistics */}
             {currentSlideData.stats && (
               <div className="grid grid-cols-3 gap-6 opacity-0 animate-[fadeInUp_0.6s_ease-out_1s_forwards]">
-                {currentSlideData.stats.map((stat, index) => {
-                  const IconComponent = stat.icon;
-                  return (
-                    <div key={index} className="text-center">
-                      <div className="flex justify-center mb-2">
-                        <IconComponent className="w-8 h-8 text-white/90" />
-                      </div>
-                      <div className="text-2xl md:text-3xl font-bold text-white mb-1">
-                        {stat.value}
-                      </div>
-                      <div className="text-sm text-white/80 font-medium">
-                        {stat.label}
-                      </div>
+                {currentSlideData.stats.map((stat, index) => (
+                  <div key={index} className="text-left">
+                    <div className="text-3xl md:text-4xl font-bold text-white mb-1">
+                      {stat.value}
                     </div>
-                  );
-                })}
+                    <div className="text-sm md:text-base text-white/90 font-medium">
+                      {stat.label}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
-          {/* Visual Element - Hero Image */}
+          {/* Hero Image - Matching prototype */}
           <div className="hidden lg:flex justify-center items-center opacity-0 animate-[fadeInRight_0.8s_ease-out_0.6s_forwards]">
-            <div className="relative w-80 h-80">
+            <div className="relative w-full max-w-lg">
               {/* Hero Image */}
               {currentSlideData.heroImage && (
-                <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl">
+                <div className="rounded-2xl overflow-hidden shadow-2xl">
                   <img
                     src={currentSlideData.heroImage}
                     alt={currentSlideData.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-80 object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
               )}
               
-              {/* Central Banking Icon Overlay */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
-                {currentSlide === 0 && <Building2 className="w-12 h-12 text-emerald-700" />}
-                {currentSlide === 1 && <Smartphone className="w-12 h-12 text-orange-700" />}
-                {currentSlide === 2 && <CreditCard className="w-12 h-12 text-blue-700" />}
-                {currentSlide === 3 && <PiggyBank className="w-12 h-12 text-purple-700" />}
+              {/* Floating Badge */}
+              <div className="absolute -top-4 -right-4 bg-white rounded-full p-4 shadow-lg">
+                {currentSlide === 0 && <Building2 className="w-8 h-8 text-emerald-700" />}
+                {currentSlide === 1 && <Smartphone className="w-8 h-8 text-orange-700" />}
+                {currentSlide === 2 && <CreditCard className="w-8 h-8 text-blue-700" />}
+                {currentSlide === 3 && <PiggyBank className="w-8 h-8 text-purple-700" />}
               </div>
               
-              {/* Floating Elements */}
-              <div className="absolute -top-4 -left-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-bounce">
-                <Banknote className="w-6 h-6 text-white" />
-              </div>
-              <div className="absolute -top-4 -right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-pulse">
-                <Shield className="w-5 h-5 text-white" />
-              </div>
-              <div className="absolute -bottom-4 -left-4 w-11 h-11 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-bounce" style={{ animationDelay: '0.5s' }}>
-                <Users className="w-5 h-5 text-white" />
-              </div>
-              <div className="absolute -bottom-4 -right-4 w-9 h-9 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center animate-pulse" style={{ animationDelay: '1s' }}>
-                <Clock className="w-4 h-4 text-white" />
+              {/* Quality Indicators */}
+              <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2">
+                <div className="flex items-center space-x-2">
+                  <Shield className="w-4 h-4 text-emerald-700" />
+                  <span className="text-sm font-medium text-gray-800">NDIC Insured</span>
+                </div>
               </div>
             </div>
           </div>

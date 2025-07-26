@@ -231,36 +231,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin authentication
+  // Admin authentication - Fixed credentials only
   app.post("/api/admin/login", async (req, res) => {
     try {
       const { username, password } = req.body;
-      const user = await storage.getAdminUser(username);
       
-      if (!user || !await bcrypt.compare(password, user.passwordHash)) {
+      // Fixed admin credentials - only these work
+      const ADMIN_USERNAME = "ctiardemmanuel";
+      const ADMIN_PASSWORD = "DrEmmanuelcomputer";
+      
+      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        res.json({ success: true, message: "Login successful" });
+      } else {
         return res.status(401).json({ message: "Invalid credentials" });
       }
-      
-      res.json({ success: true, message: "Login successful" });
-    } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
-  app.post("/api/admin/setup", async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      
-      // Check if admin already exists
-      const existing = await storage.getAdminUser(username);
-      if (existing) {
-        return res.status(400).json({ message: "Admin user already exists" });
-      }
-      
-      const passwordHash = await bcrypt.hash(password, 10);
-      await storage.createAdminUser({ username, passwordHash });
-      
-      res.json({ success: true, message: "Admin user created" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }

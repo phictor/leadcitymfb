@@ -16,7 +16,6 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     password: ""
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [isSetup, setIsSetup] = useState(false);
   const { toast } = useToast();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -42,58 +41,9 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
         localStorage.setItem('adminAuth', 'true');
         onLogin();
       } else {
-        // If admin doesn't exist, show setup mode
-        if (response.status === 401 && !isSetup) {
-          setIsSetup(true);
-          toast({
-            title: "Setup Required",
-            description: "Create your admin account to get started.",
-          });
-        } else {
-          toast({
-            title: "Login Failed",
-            description: data.message || "Invalid credentials",
-            variant: "destructive",
-          });
-        }
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSetup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/admin/setup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
         toast({
-          title: "Admin Created",
-          description: "Your admin account has been created. Please login.",
-        });
-        setIsSetup(false);
-        setFormData({ username: "", password: "" });
-      } else {
-        toast({
-          title: "Setup Failed",
-          description: data.message || "Failed to create admin account",
+          title: "Login Failed",
+          description: "Invalid username or password",
           variant: "destructive",
         });
       }
@@ -108,6 +58,8 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     }
   };
 
+
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -116,17 +68,14 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
             <Shield className="w-6 h-6 text-white" />
           </div>
           <CardTitle className="text-2xl font-bold">
-            {isSetup ? "Setup Admin Account" : "Admin Login"}
+            Admin Login
           </CardTitle>
           <p className="text-gray-600">
-            {isSetup 
-              ? "Create your administrator account to manage the website"
-              : "Enter your credentials to access the admin panel"
-            }
+            Enter your credentials to access the admin panel
           </p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={isSetup ? handleSetup : handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <Label htmlFor="username">Username</Label>
               <div className="relative">
@@ -164,34 +113,16 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
               className="w-full bg-brand-green hover:bg-dark-green"
               disabled={isLoading}
             >
-              {isLoading ? "Processing..." : (isSetup ? "Create Admin Account" : "Login")}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
 
-            {isSetup && (
-              <Button 
-                type="button" 
-                variant="outline"
-                className="w-full"
-                onClick={() => setIsSetup(false)}
-              >
-                Back to Login
-              </Button>
-            )}
           </form>
 
-          {!isSetup && (
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                First time here?{' '}
-                <button 
-                  onClick={() => setIsSetup(true)}
-                  className="text-brand-green hover:underline"
-                >
-                  Setup Admin Account
-                </button>
-              </p>
-            </div>
-          )}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Use your administrator credentials to access the panel
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
