@@ -1,7 +1,64 @@
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Building, Users, Award, History } from "lucide-react";
+
+interface AboutSection {
+  id: number;
+  sectionType: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  metadata?: string;
+  isActive: boolean;
+  sortOrder: number;
+}
 
 export default function About() {
+  // Fetch about sections from database
+  const { data: dbSections = [], isLoading } = useQuery({
+    queryKey: ['/api/about-sections'],
+  });
+
+  // Group sections by type
+  const groupedSections = (dbSections as AboutSection[]).reduce((acc: Record<string, AboutSection[]>, section: AboutSection) => {
+    if (section.isActive) {
+      if (!acc[section.sectionType]) acc[section.sectionType] = [];
+      acc[section.sectionType].push(section);
+    }
+    return acc;
+  }, {});
+
+  // Sort sections within each type by sortOrder
+  Object.keys(groupedSections).forEach(type => {
+    groupedSections[type].sort((a, b) => a.sortOrder - b.sortOrder);
+  });
+
+  const getSectionsByType = (type: string) => {
+    return groupedSections[type] || [];
+  };
+
+  const parseMetadata = (metadata?: string) => {
+    if (!metadata) return {};
+    try {
+      return JSON.parse(metadata);
+    } catch {
+      return {};
+    }
+  };
+
+  const overviewSection = getSectionsByType('overview')[0];
+  const missionSections = getSectionsByType('mission');
+  const visionSections = getSectionsByType('vision');
+  const valuesSections = getSectionsByType('values');
+  const historySections = getSectionsByType('history');
+  const teamSections = getSectionsByType('team');
+  const achievementSections = getSectionsByType('achievement');
+  const cultureSections = getSectionsByType('culture');
+
+  if (isLoading) {
+    return <div className="pt-16 flex items-center justify-center h-64">Loading about information...</div>;
+  }
+
   return (
     <div className="pt-16">
       {/* About Hero Section */}
@@ -9,10 +66,10 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold dark-green mb-6">
-              About Lead City Microfinance Bank
+              {overviewSection?.title || "About Lead City Microfinance Bank"}
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Established within Lead City University, Ibadan, we are a licensed microfinance bank committed to providing accessible financial services to staff, businesses, and individuals.
+              {overviewSection?.content || "Established within Lead City University, Ibadan, we are a licensed microfinance bank committed to providing accessible financial services to staff, businesses, and individuals."}
             </p>
           </div>
         </div>
@@ -24,41 +81,81 @@ export default function About() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-6">
-                <div>
-                  <h3 className="text-2xl font-semibold dark-green mb-4">Our Mission</h3>
-                  <p className="text-gray-600">
-                    To provide accessible, reliable, and innovative microfinance services that empower individuals and small businesses to achieve their financial goals through technology-driven solutions and customer-centric approaches.
-                  </p>
-                </div>
+                {/* Mission Section */}
+                {missionSections.length > 0 ? (
+                  missionSections.map((section) => (
+                    <div key={section.id}>
+                      <h3 className="text-2xl font-semibold dark-green mb-4">{section.title}</h3>
+                      <p className="text-gray-600">{section.content}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <h3 className="text-2xl font-semibold dark-green mb-4">Our Mission</h3>
+                    <p className="text-gray-600">
+                      To provide accessible, reliable, and innovative microfinance services that empower individuals and small businesses to achieve their financial goals through technology-driven solutions and customer-centric approaches.
+                    </p>
+                  </div>
+                )}
 
-                <div>
-                  <h3 className="text-2xl font-semibold dark-green mb-4">Our Vision</h3>
-                  <p className="text-gray-600">
-                    To become the leading microfinance bank in Nigeria, driving financial inclusion and economic growth through innovative technology and customer-centric services that transform lives and businesses.
-                  </p>
-                </div>
+                {/* Vision Section */}
+                {visionSections.length > 0 ? (
+                  visionSections.map((section) => (
+                    <div key={section.id}>
+                      <h3 className="text-2xl font-semibold dark-green mb-4">{section.title}</h3>
+                      <p className="text-gray-600">{section.content}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div>
+                    <h3 className="text-2xl font-semibold dark-green mb-4">Our Vision</h3>
+                    <p className="text-gray-600">
+                      To become the leading microfinance bank in Nigeria, driving financial inclusion and economic growth through innovative technology and customer-centric services that transform lives and businesses.
+                    </p>
+                  </div>
+                )}
 
-                <div>
-                  <h3 className="text-2xl font-semibold dark-green mb-4">Our Values</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
-                      <span className="text-gray-600">Integrity</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
-                      <span className="text-gray-600">Innovation</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
-                      <span className="text-gray-600">Customer Focus</span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
-                      <span className="text-gray-600">Excellence</span>
+                {/* Values Section */}
+                {valuesSections.length > 0 ? (
+                  <div>
+                    <h3 className="text-2xl font-semibold dark-green mb-4">
+                      {valuesSections[0]?.title || "Our Values"}
+                    </h3>
+                    <div className="space-y-3">
+                      {valuesSections.map((section) => (
+                        <div key={section.id} className="flex items-start">
+                          <CheckCircle className="w-5 h-5 text-brand-green mr-3 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <h4 className="font-medium text-gray-800">{section.title}</h4>
+                            <p className="text-sm text-gray-600">{section.content}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div>
+                    <h3 className="text-2xl font-semibold dark-green mb-4">Our Values</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex items-center">
+                        <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
+                        <span className="text-gray-600">Integrity</span>
+                      </div>
+                      <div className="flex items-center">
+                        <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
+                        <span className="text-gray-600">Innovation</span>
+                      </div>
+                      <div className="flex items-center">
+                        <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
+                        <span className="text-gray-600">Customer Focus</span>
+                      </div>
+                      <div className="flex items-center">
+                        <CheckCircle className="w-5 h-5 text-brand-green mr-2" />
+                        <span className="text-gray-600">Excellence</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -72,6 +169,108 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* Additional Sections from Database */}
+      {(historySections.length > 0 || teamSections.length > 0 || achievementSections.length > 0 || cultureSections.length > 0) && (
+        <section className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-12">
+              
+              {/* History Section */}
+              {historySections.length > 0 && (
+                <div className="space-y-6">
+                  <div className="flex items-center mb-6">
+                    <History className="w-8 h-8 text-brand-green mr-3" />
+                    <h2 className="text-3xl font-bold dark-green">Our History</h2>
+                  </div>
+                  {historySections.map((section) => (
+                    <Card key={section.id}>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold dark-green mb-3">{section.title}</h3>
+                        <p className="text-gray-600">{section.content}</p>
+                        {section.imageUrl && (
+                          <img 
+                            src={section.imageUrl} 
+                            alt={section.title}
+                            className="mt-4 w-full h-48 object-cover rounded-lg"
+                          />
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {/* Team Section */}
+              {teamSections.length > 0 && (
+                <div className="space-y-6">
+                  <div className="flex items-center mb-6">
+                    <Users className="w-8 h-8 text-brand-green mr-3" />
+                    <h2 className="text-3xl font-bold dark-green">Our Team</h2>
+                  </div>
+                  {teamSections.map((section) => (
+                    <Card key={section.id}>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold dark-green mb-3">{section.title}</h3>
+                        <p className="text-gray-600">{section.content}</p>
+                        {section.imageUrl && (
+                          <img 
+                            src={section.imageUrl} 
+                            alt={section.title}
+                            className="mt-4 w-24 h-24 object-cover rounded-full mx-auto"
+                          />
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+            </div>
+
+            {/* Achievements Section */}
+            {achievementSections.length > 0 && (
+              <div className="mt-16">
+                <div className="flex items-center justify-center mb-8">
+                  <Award className="w-8 h-8 text-brand-green mr-3" />
+                  <h2 className="text-3xl font-bold dark-green">Our Achievements</h2>
+                </div>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {achievementSections.map((section) => (
+                    <Card key={section.id} className="text-center">
+                      <CardContent className="p-6">
+                        <Award className="w-12 h-12 text-brand-green mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold dark-green mb-2">{section.title}</h3>
+                        <p className="text-gray-600 text-sm">{section.content}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Culture Section */}
+            {cultureSections.length > 0 && (
+              <div className="mt-16">
+                <div className="flex items-center justify-center mb-8">
+                  <Building className="w-8 h-8 text-brand-green mr-3" />
+                  <h2 className="text-3xl font-bold dark-green">Our Culture</h2>
+                </div>
+                <div className="space-y-6">
+                  {cultureSections.map((section) => (
+                    <Card key={section.id}>
+                      <CardContent className="p-6">
+                        <h3 className="text-xl font-semibold dark-green mb-3">{section.title}</h3>
+                        <p className="text-gray-600">{section.content}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Statistics Section */}
       <section className="py-20 bg-brand-green">
