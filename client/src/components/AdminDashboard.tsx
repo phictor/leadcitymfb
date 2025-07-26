@@ -12,8 +12,10 @@ import { Plus, Edit, Trash2, Calendar, User, Eye, Mail, Phone, Building, DollarS
 import { useNewsArticles, useCreateNewsArticle, useUpdateNewsArticle, useDeleteNewsArticle, type NewsArticle } from "@/hooks/useNews";
 import { useToast } from "@/hooks/use-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import PageContentManager from "@/components/PageContentManager";
 import HomepageContentManager from "@/components/HomepageContentManager";
+import ContactPageManager from "@/components/ContactPageManager";
+import ProductPageManager from "@/components/ProductPageManager";
+import AboutPageManager from "@/components/AboutPageManager";
 
 interface AdminDashboardProps {
   onLogout: () => void;
@@ -186,12 +188,13 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
         </div>
 
         <Tabs defaultValue="news" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="news">News Articles</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-7">
+            <TabsTrigger value="news">News</TabsTrigger>
             <TabsTrigger value="homepage">Homepage</TabsTrigger>
-            <TabsTrigger value="pages">Page Content</TabsTrigger>
+            <TabsTrigger value="contact">Contact</TabsTrigger>
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="about">About Us</TabsTrigger>
             <TabsTrigger value="applications">Applications</TabsTrigger>
-            <TabsTrigger value="messages">Messages</TabsTrigger>
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
           </TabsList>
 
@@ -420,31 +423,16 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <HomepageContentManager />
           </TabsContent>
 
-          <TabsContent value="pages" className="space-y-6">
-            <Tabs defaultValue="home" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="home">Home Page</TabsTrigger>
-                <TabsTrigger value="contact">Contact Page</TabsTrigger>
-                <TabsTrigger value="branches">Branches Page</TabsTrigger>
-                <TabsTrigger value="banking">Online Banking</TabsTrigger>
-              </TabsList>
+          <TabsContent value="contact" className="space-y-6">
+            <ContactPageManager />
+          </TabsContent>
 
-              <TabsContent value="home">
-                <PageContentManager pageId="home" pageName="Home Page" />
-              </TabsContent>
+          <TabsContent value="products" className="space-y-6">
+            <ProductPageManager />
+          </TabsContent>
 
-              <TabsContent value="contact">
-                <PageContentManager pageId="contact" pageName="Contact Page" />
-              </TabsContent>
-
-              <TabsContent value="branches">
-                <PageContentManager pageId="branches" pageName="Branches Page" />
-              </TabsContent>
-
-              <TabsContent value="banking">
-                <PageContentManager pageId="banking" pageName="Online Banking Page" />
-              </TabsContent>
-            </Tabs>
+          <TabsContent value="about" className="space-y-6">
+            <AboutPageManager />
           </TabsContent>
 
           <TabsContent value="applications" className="space-y-6">

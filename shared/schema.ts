@@ -264,3 +264,147 @@ export type ProductCard = typeof productCards.$inferSelect;
 
 export type InsertFaqItem = z.infer<typeof insertFaqItemSchema>;
 export type FaqItem = typeof faqItems.$inferSelect;
+
+// Contact Information table
+export const contactInfo = pgTable('contact_info', {
+  id: serial('id').primaryKey(),
+  sectionKey: text('section_key').notNull(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  imageUrl: text('image_url'),
+  metadata: text('metadata'), // JSON string for additional data
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const insertContactInfoSchema = createInsertSchema(contactInfo).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Products/Services table
+export const products = pgTable('products', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description').notNull(),
+  features: text('features').notNull(), // JSON array
+  benefits: text('benefits').notNull(), // JSON array
+  requirements: text('requirements').notNull(), // JSON array
+  interestRate: text('interest_rate'),
+  minimumAmount: text('minimum_amount'),
+  maximumAmount: text('maximum_amount'),
+  tenure: text('tenure'),
+  category: text('category').notNull(), // 'savings', 'current', 'loan', 'investment'
+  imageUrl: text('image_url'),
+  isActive: boolean('is_active').default(true),
+  sortOrder: integer('sort_order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const insertProductSchema = createInsertSchema(products).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Interest Rates & Charges table
+export const rates = pgTable('rates', {
+  id: serial('id').primaryKey(),
+  productType: text('product_type').notNull(),
+  rateType: text('rate_type').notNull(), // 'interest', 'charge', 'fee'
+  value: text('value').notNull(),
+  description: text('description').notNull(),
+  effectiveDate: text('effective_date').notNull(),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const insertRateSchema = createInsertSchema(rates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// About Sections table
+export const aboutSections = pgTable('about_sections', {
+  id: serial('id').primaryKey(),
+  sectionType: text('section_type').notNull(), // 'mission', 'vision', 'values', 'history', 'team', 'achievement'
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  imageUrl: text('image_url'),
+  metadata: text('metadata'), // JSON for additional data
+  isActive: boolean('is_active').default(true),
+  sortOrder: integer('sort_order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const insertAboutSectionSchema = createInsertSchema(aboutSections).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Team Members table
+export const teamMembers = pgTable('team_members', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  position: text('position').notNull(),
+  bio: text('bio').notNull(),
+  imageUrl: text('image_url'),
+  linkedin: text('linkedin'),
+  email: text('email'),
+  department: text('department').notNull(),
+  isActive: boolean('is_active').default(true),
+  sortOrder: integer('sort_order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Achievements table
+export const achievements = pgTable('achievements', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  year: text('year').notNull(),
+  category: text('category').notNull(), // 'award', 'milestone', 'certification'
+  imageUrl: text('image_url'),
+  isActive: boolean('is_active').default(true),
+  sortOrder: integer('sort_order').default(0),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export const insertAchievementSchema = createInsertSchema(achievements).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type ContactInfo = typeof contactInfo.$inferSelect;
+export type InsertContactInfo = z.infer<typeof insertContactInfoSchema>;
+
+export type Product = typeof products.$inferSelect;
+export type InsertProduct = z.infer<typeof insertProductSchema>;
+
+export type Rate = typeof rates.$inferSelect;
+export type InsertRate = z.infer<typeof insertRateSchema>;
+
+export type AboutSection = typeof aboutSections.$inferSelect;
+export type InsertAboutSection = z.infer<typeof insertAboutSectionSchema>;
+
+export type TeamMember = typeof teamMembers.$inferSelect;
+export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
+
+export type Achievement = typeof achievements.$inferSelect;
+export type InsertAchievement = z.infer<typeof insertAchievementSchema>;

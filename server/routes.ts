@@ -1,6 +1,16 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+import { 
+  contactInfo, 
+  products, 
+  rates, 
+  aboutSections, 
+  teamMembers, 
+  achievements 
+} from "@shared/schema";
 import { 
   insertAccountApplicationSchema, 
   insertLoanApplicationSchema, 
@@ -11,7 +21,13 @@ import {
   insertAdminUserSchema,
   insertHeroSlideSchema,
   insertProductCardSchema,
-  insertFaqItemSchema
+  insertFaqItemSchema,
+  insertContactInfoSchema,
+  insertProductSchema,
+  insertRateSchema,
+  insertAboutSectionSchema,
+  insertTeamMemberSchema,
+  insertAchievementSchema
 } from "@shared/schema";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -375,6 +391,207 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Contact Information routes
+  app.get("/api/contact-info", async (req, res) => {
+    try {
+      const info = await db.select().from(contactInfo).orderBy(contactInfo.createdAt);
+      res.json(info);
+    } catch (error) {
+      console.error("Error fetching contact info:", error);
+      res.status(500).json({ error: "Failed to fetch contact information" });
+    }
+  });
+
+  app.post("/api/contact-info", async (req, res) => {
+    try {
+      const result = insertContactInfoSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid contact info data", details: result.error.issues });
+      }
+
+      const [newInfo] = await db.insert(contactInfo).values(result.data).returning();
+      res.status(201).json(newInfo);
+    } catch (error) {
+      console.error("Error creating contact info:", error);
+      res.status(500).json({ error: "Failed to create contact information" });
+    }
+  });
+
+  app.put("/api/contact-info/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const result = insertContactInfoSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid contact info data", details: result.error.issues });
+      }
+
+      const [updatedInfo] = await db
+        .update(contactInfo)
+        .set({ ...result.data, updatedAt: new Date() })
+        .where(eq(contactInfo.id, id))
+        .returning();
+
+      if (!updatedInfo) {
+        return res.status(404).json({ error: "Contact info not found" });
+      }
+
+      res.json(updatedInfo);
+    } catch (error) {
+      console.error("Error updating contact info:", error);
+      res.status(500).json({ error: "Failed to update contact information" });
+    }
+  });
+
+  app.delete("/api/contact-info/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const [deletedInfo] = await db.delete(contactInfo).where(eq(contactInfo.id, id)).returning();
+      
+      if (!deletedInfo) {
+        return res.status(404).json({ error: "Contact info not found" });
+      }
+
+      res.json({ message: "Contact information deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting contact info:", error);
+      res.status(500).json({ error: "Failed to delete contact information" });
+    }
+  });
+
+  // Products routes
+  app.get("/api/products", async (req, res) => {
+    try {
+      const productList = await db.select().from(products).orderBy(products.sortOrder);
+      res.json(productList);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      res.status(500).json({ error: "Failed to fetch products" });
+    }
+  });
+
+  app.post("/api/products", async (req, res) => {
+    try {
+      const result = insertProductSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid product data", details: result.error.issues });
+      }
+
+      const [newProduct] = await db.insert(products).values(result.data).returning();
+      res.status(201).json(newProduct);
+    } catch (error) {
+      console.error("Error creating product:", error);
+      res.status(500).json({ error: "Failed to create product" });
+    }
+  });
+
+  app.put("/api/products/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const result = insertProductSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid product data", details: result.error.issues });
+      }
+
+      const [updatedProduct] = await db
+        .update(products)
+        .set({ ...result.data, updatedAt: new Date() })
+        .where(eq(products.id, id))
+        .returning();
+
+      if (!updatedProduct) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.json(updatedProduct);
+    } catch (error) {
+      console.error("Error updating product:", error);
+      res.status(500).json({ error: "Failed to update product" });
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const [deletedProduct] = await db.delete(products).where(eq(products.id, id)).returning();
+      
+      if (!deletedProduct) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      res.json({ message: "Product deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      res.status(500).json({ error: "Failed to delete product" });
+    }
+  });
+
+  // About Sections routes
+  app.get("/api/about-sections", async (req, res) => {
+    try {
+      const sections = await db.select().from(aboutSections).orderBy(aboutSections.sortOrder);
+      res.json(sections);
+    } catch (error) {
+      console.error("Error fetching about sections:", error);
+      res.status(500).json({ error: "Failed to fetch about sections" });
+    }
+  });
+
+  app.post("/api/about-sections", async (req, res) => {
+    try {
+      const result = insertAboutSectionSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid about section data", details: result.error.issues });
+      }
+
+      const [newSection] = await db.insert(aboutSections).values(result.data).returning();
+      res.status(201).json(newSection);
+    } catch (error) {
+      console.error("Error creating about section:", error);
+      res.status(500).json({ error: "Failed to create about section" });
+    }
+  });
+
+  app.put("/api/about-sections/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const result = insertAboutSectionSchema.safeParse(req.body);
+      if (!result.success) {
+        return res.status(400).json({ error: "Invalid about section data", details: result.error.issues });
+      }
+
+      const [updatedSection] = await db
+        .update(aboutSections)
+        .set({ ...result.data, updatedAt: new Date() })
+        .where(eq(aboutSections.id, id))
+        .returning();
+
+      if (!updatedSection) {
+        return res.status(404).json({ error: "About section not found" });
+      }
+
+      res.json(updatedSection);
+    } catch (error) {
+      console.error("Error updating about section:", error);
+      res.status(500).json({ error: "Failed to update about section" });
+    }
+  });
+
+  app.delete("/api/about-sections/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const [deletedSection] = await db.delete(aboutSections).where(eq(aboutSections.id, id)).returning();
+      
+      if (!deletedSection) {
+        return res.status(404).json({ error: "About section not found" });
+      }
+
+      res.json({ message: "About section deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting about section:", error);
+      res.status(500).json({ error: "Failed to delete about section" });
     }
   });
 
