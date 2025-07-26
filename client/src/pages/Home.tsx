@@ -1,4 +1,4 @@
-import HeroSection from "@/components/HeroSection";
+import HeroCarousel from "@/components/HeroCarousel";
 import ProductCard from "@/components/ProductCard";
 import FAQSection from "@/components/FAQSection";
 import { PRODUCTS, LOAN_PRODUCTS } from "@/lib/constants";
@@ -15,8 +15,8 @@ const iconMap = {
 export default function Home() {
   return (
     <div>
-      {/* Hero Section */}
-      <HeroSection />
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Products & Services Section */}
       <section id="products" className="py-20 bg-white">
