@@ -12,63 +12,107 @@
     
     <!-- Disable developer tools and source inspection -->
     <script>
-      // Disable right-click context menu
-      document.addEventListener('contextmenu', function(e) {
-        e.preventDefault();
-        return false;
-      });
-      
-      // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
-      document.addEventListener('keydown', function(e) {
-        if (e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-            (e.ctrlKey && e.shiftKey && e.key === 'C') ||
-            (e.ctrlKey && e.key === 'u') ||
-            (e.ctrlKey && e.key === 's')) {
+      // Silent protection - no user notifications or alerts
+      (function() {
+        'use strict';
+        
+        // Only apply protection in production environment
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          return; // Skip protection in development
+        }
+
+        // Disable right-click context menu except on form inputs
+        document.addEventListener('contextmenu', function(e) {
+          var target = e.target;
+          if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+            return true; // Allow context menu on form inputs for mobile users
+          }
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }, true);
+        
+        // Disable developer shortcuts silently
+        document.addEventListener('keydown', function(e) {
+          // Block F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+U, Ctrl+S
+          if (e.key === 'F12' || 
+              (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C')) ||
+              (e.ctrlKey && (e.key === 'u' || e.key === 's'))) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+          }
+        }, true);
+        
+        // Disable text selection except in form inputs and content areas
+        document.addEventListener('selectstart', function(e) {
+          var target = e.target;
+          if (target.tagName === 'INPUT' || 
+              target.tagName === 'TEXTAREA' || 
+              target.contentEditable === 'true' ||
+              target.classList.contains('selectable')) {
+            return true; // Allow selection in form inputs
+          }
           e.preventDefault();
           return false;
-        }
-      });
-      
-      // Disable text selection
-      document.addEventListener('selectstart', function(e) {
-        e.preventDefault();
-        return false;
-      });
-      
-      // Disable drag and drop
-      document.addEventListener('dragstart', function(e) {
-        e.preventDefault();
-        return false;
-      });
-      
-      // Clear console and disable debugging
-      if (typeof console !== 'undefined') {
-        console.clear();
-        console.log = function() {};
-        console.warn = function() {};
-        console.error = function() {};
-        console.info = function() {};
-        console.debug = function() {};
-      }
-      
-      // Detect and redirect developer tools
-      let devtools = {
-        open: false,
-        orientation: null
-      };
-      
-      setInterval(function() {
-        if (window.outerHeight - window.innerHeight > 160 || 
-            window.outerWidth - window.innerWidth > 160) {
-          if (!devtools.open) {
-            devtools.open = true;
-            window.location.href = '/';
+        }, true);
+        
+        // Disable drag operations
+        document.addEventListener('dragstart', function(e) {
+          e.preventDefault();
+          return false;
+        }, true);
+        
+        // Silent console hijacking
+        try {
+          if (typeof console !== 'undefined') {
+            var noop = function() {};
+            ['log', 'warn', 'error', 'info', 'debug', 'trace', 'table', 'group', 'groupEnd', 'clear'].forEach(function(method) {
+              if (console[method]) {
+                console[method] = noop;
+              }
+            });
           }
-        } else {
-          devtools.open = false;
+        } catch(e) {
+          // Silent fail
         }
-      }, 500);
+        
+        // Silent developer tools detection (mobile-friendly)
+        var devtools = { open: false };
+        var threshold = window.innerWidth < 768 ? 50 : 160; // Smaller threshold for mobile
+        
+        setInterval(function() {
+          var heightDiff = window.outerHeight - window.innerHeight;
+          var widthDiff = window.outerWidth - window.innerWidth;
+          
+          if (heightDiff > threshold || widthDiff > threshold) {
+            if (!devtools.open) {
+              devtools.open = true;
+              // Silent redirect with no indication
+              setTimeout(function() {
+                window.location.replace('/');
+              }, 100);
+            }
+          } else {
+            devtools.open = false;
+          }
+        }, 1000); // Less frequent checks to avoid performance impact
+        
+        // Disable copy/paste except in form inputs
+        ['copy', 'paste', 'cut'].forEach(function(event) {
+          document.addEventListener(event, function(e) {
+            var target = e.target;
+            if (target.tagName === 'INPUT' || 
+                target.tagName === 'TEXTAREA' || 
+                target.contentEditable === 'true') {
+              return true; // Allow copy/paste in form inputs
+            }
+            e.preventDefault();
+            return false;
+          }, true);
+        });
+        
+      })();
     </script>
   </head>
   <body>

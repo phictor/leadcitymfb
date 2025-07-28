@@ -20,36 +20,53 @@ export class SourceProtection {
   }
 
   private disableDevTools() {
-    // Disable context menu
+    // Disable context menu except on form inputs
     document.addEventListener('contextmenu', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return true; // Allow context menu on form inputs
+      }
       e.preventDefault();
       return false;
     });
 
     // Disable keyboard shortcuts
     document.addEventListener('keydown', (e) => {
-      const forbiddenKeys = [
-        'F12',
-        'I', 'J', 'U', 'S', 'A', 'C' // With Ctrl combinations
-      ];
+      const target = e.target as HTMLElement;
+      
+      // Allow normal operations in form inputs
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return true;
+      }
 
       if (e.key === 'F12' || 
-          (e.ctrlKey && e.shiftKey && forbiddenKeys.includes(e.key.toUpperCase())) ||
-          (e.ctrlKey && ['u', 's', 'a'].includes(e.key.toLowerCase()))) {
+          (e.ctrlKey && e.shiftKey && ['I', 'C'].includes(e.key.toUpperCase())) ||
+          (e.ctrlKey && ['u', 's'].includes(e.key.toLowerCase()))) {
         e.preventDefault();
         e.stopPropagation();
         return false;
       }
     });
 
-    // Disable text selection
+    // Disable text selection except in form inputs and content areas
     document.addEventListener('selectstart', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || 
+          target.tagName === 'TEXTAREA' || 
+          target.contentEditable === 'true' ||
+          target.classList.contains('selectable')) {
+        return true;
+      }
       e.preventDefault();
       return false;
     });
 
-    // Disable drag operations
+    // Disable drag operations except for form inputs
     document.addEventListener('dragstart', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return true;
+      }
       e.preventDefault();
       return false;
     });
@@ -126,8 +143,10 @@ export class SourceProtection {
   private handleDebugDetection() {
     if (!this.debugDetected) {
       this.debugDetected = true;
-      // Redirect to homepage or show warning
-      window.location.href = '/';
+      // Silent redirect without any user notification
+      setTimeout(() => {
+        window.location.replace('/');
+      }, 100);
     }
   }
 
