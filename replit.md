@@ -123,6 +123,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Server**: Express serves static files and API routes
 - **Database**: PostgreSQL connection via environment variable
 
+### Deployment Configuration
+- **Platform**: Render.com with Node.js runtime
+- **Build Command**: `npm ci && npm run build`
+- **Start Command**: `npm start`
+- **Environment**: `NODE_ENV=production`, `PORT=10000`
+- **Database**: PostgreSQL with automatic DATABASE_URL injection
+- **Health Check**: `/` endpoint for service monitoring
+
 ### Environment Configuration
 - `NODE_ENV`: Development/production mode
 - `DATABASE_URL`: PostgreSQL connection string (required)
