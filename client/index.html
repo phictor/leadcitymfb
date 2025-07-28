@@ -3,11 +3,76 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Lead City Microfinance Bank - Professional Banking Services</title>
+    <meta name="description" content="Lead City Microfinance Bank offers comprehensive financial services including savings accounts, loans, and business banking solutions in Nigeria." />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Lead City Microfinance Bank" />
+    <meta name="generator" content="Lead City MFB Web Platform" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    
+    <!-- Disable developer tools and source inspection -->
+    <script>
+      // Disable right-click context menu
+      document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12' || 
+            (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+            (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+            (e.ctrlKey && e.key === 'u') ||
+            (e.ctrlKey && e.key === 's')) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      
+      // Disable text selection
+      document.addEventListener('selectstart', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      // Disable drag and drop
+      document.addEventListener('dragstart', function(e) {
+        e.preventDefault();
+        return false;
+      });
+      
+      // Clear console and disable debugging
+      if (typeof console !== 'undefined') {
+        console.clear();
+        console.log = function() {};
+        console.warn = function() {};
+        console.error = function() {};
+        console.info = function() {};
+        console.debug = function() {};
+      }
+      
+      // Detect and redirect developer tools
+      let devtools = {
+        open: false,
+        orientation: null
+      };
+      
+      setInterval(function() {
+        if (window.outerHeight - window.innerHeight > 160 || 
+            window.outerWidth - window.innerWidth > 160) {
+          if (!devtools.open) {
+            devtools.open = true;
+            window.location.href = '/';
+          }
+        } else {
+          devtools.open = false;
+        }
+      }, 500);
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- This is a replit script which adds a banner on the top of the page when opened in development mode outside the replit environment -->
-    <script type="text/javascript" src="https://replit.com/public/js/replit-dev-banner.js"></script>
   </body>
 </html>

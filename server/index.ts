@@ -3,6 +3,27 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
+
+// Security headers to prevent inspection and hide server info
+app.use((req, res, next) => {
+  // Remove server identification headers
+  res.removeHeader('X-Powered-By');
+  res.removeHeader('Server');
+  
+  // Security headers
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self';");
+  
+  // Hide technology stack
+  res.setHeader('X-Powered-By', 'Lead City MFB Web Platform');
+  res.setHeader('Server', 'LCMFB-Server/1.0');
+  
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

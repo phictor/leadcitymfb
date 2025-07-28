@@ -129,4 +129,23 @@ The application follows a modern full-stack architecture with clear separation b
 - Vite configuration for aliases and build settings
 - TypeScript paths for clean imports (@, @shared, @assets)
 
-The application is designed for deployment on platforms that support Node.js with PostgreSQL, with specific optimizations for Replit environment including development banner integration and runtime error overlay.
+The application is designed for deployment on platforms that support Node.js with PostgreSQL, with comprehensive security measures implemented for source code protection.
+
+## Security & Source Protection
+
+### Production Security Features
+- **Replit Branding Removal**: All Replit banners, development tools, and branding completely removed from production builds
+- **Source Code Protection**: Comprehensive anti-debugging and inspection prevention measures
+- **Security Headers**: HTTP security headers including CSP, XSS protection, and frame denial
+- **Console Hijacking**: Developer console disabled and cleared in production
+- **Keyboard Shortcuts**: F12, Ctrl+Shift+I, Ctrl+U, and other dev shortcuts disabled
+- **Text Selection**: User selection and copy/paste operations disabled for source protection
+- **Developer Tools Detection**: Automatic detection and redirection when dev tools are opened
+
+### Production Build Process
+- **Clean HTML**: All development comments and traces removed from built files
+- **Server Identity**: Custom server headers hide Express.js and Node.js stack information
+- **Source Obfuscation**: Framework-specific data attributes and debug information removed
+- **Asset Protection**: Static files served with security headers preventing unauthorized access
+
+The production build creates a completely sanitized version with no traces of the development environment or underlying technology stack, ensuring complete source protection for deployment.

@@ -2,6 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide any Replit branding or development elements */
+[class*="replit"],
+[id*="replit"],
+[data-replit],
+.replit-banner,
+.repl-banner,
+.development-banner,
+[class*="dev-banner"],
+[id*="dev-banner"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Prevent source code inspection styling */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide any dev tools or debugging elements */
+[class*="debug"],
+[class*="devtool"],
+[class*="inspector"],
+[id*="debug"],
+[id*="devtool"],
+[id*="inspector"] {
+  display: none !important;
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);
